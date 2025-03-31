@@ -1,0 +1,15 @@
+global using Auth.Auth.Models;
+global using Carter;
+global using Microsoft.AspNetCore.Routing;
+global using Microsoft.AspNetCore.Builder;
+global using Microsoft.AspNetCore.Identity;
+global using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.Extensions.Configuration;
+global using System.Security.Claims;
+global using Auth.Auth.Services;
+global using Auth.Contracts.Auth.Dtos;
+global using Mapster;
+global using Microsoft.AspNetCore.Http;
+global using Shared.CQRS;
+global using MediatR;

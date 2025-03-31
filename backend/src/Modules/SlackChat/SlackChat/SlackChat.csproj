@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Data/" />
+    <Folder Include="Workspaces/" />
+    <Folder Include="Workspaces/Dtos/" />
+    <Folder Include="Workspaces/Exceptions/" />
+    <Folder Include="Workspaces/Features/" />
+    <Folder Include="Workspaces/Models/" />
+  </ItemGroup>
+
+</Project>

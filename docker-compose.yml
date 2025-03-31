@@ -1,0 +1,28 @@
+version: '3.4'
+services:
+  devapp_db:
+    image: postgres:15.2-alpine
+    container_name: devapp_db_container
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: devapp_db
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - devapp_db:/var/lib/postgresql/data
+  messagebus:
+    image: rabbitmq:management
+    container_name: rabbitmq_container
+    restart: always
+    ports:
+      - "5672:5627"
+      - "15672:15672"
+    environment:
+      - RABITMQ_DEFAULT_USER=guest
+      - RABITMQ_DEFAULT_PASS=guest
+volumes:
+  devapp_db:
+  # redis_data:
+  #   driver: local
