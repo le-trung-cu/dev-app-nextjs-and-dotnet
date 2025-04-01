@@ -29,7 +29,7 @@ export const ReponsiveDialog = ({
   if (!isMobile) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="p-0">
+        <DialogContent className="border-0 bg-transparent p-0">
           <DialogHeader className="hidden">
             <DialogTitle></DialogTitle>
             <DialogDescription></DialogDescription>

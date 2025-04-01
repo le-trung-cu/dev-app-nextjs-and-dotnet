@@ -1,4 +1,4 @@
-import { AppSidebar } from "@/jira/components/app-sidebar"
+import { AppSidebar } from "@/jira/components/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -6,20 +6,20 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import { Modals } from "@/jira/components/modals";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -46,10 +46,9 @@ export default function DashboardLayout({
             </Breadcrumb>
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          {children}
-        </div>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
       </SidebarInset>
+      <Modals />
     </SidebarProvider>
-  )
+  );
 }

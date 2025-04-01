@@ -5,7 +5,7 @@ namespace JiraTaskManager.Workspaces.Features.CreateWorkspace;
 public record CreateWorkspaceCommand(string Name, string? ImgUrl, IFormFile? File)
   : ICommand<CreateWorkspaceResult>;
 
-public record CreateWorkspaceResult(Guid Id, string Name);
+public record CreateWorkspaceResult(bool IsSuccess, Guid Id);
 
 public class CreateWorkspaceCommandValidator : AbstractValidator<CreateWorkspaceCommand>
 {
@@ -21,7 +21,7 @@ public class CreateWorkspaceHandler
 {
   public async Task<CreateWorkspaceResult> Handle(CreateWorkspaceCommand command, CancellationToken cancellationToken)
   {
-    var userId = user.GetUserIdOrThrow();
+    var userId = user.GetUserId();
 
     var workspace = Workspace.Create(userId, command.Name, command.ImgUrl);
 
@@ -34,6 +34,6 @@ public class CreateWorkspaceHandler
     dbContext.Workspaces.Add(workspace);
     await dbContext.SaveChangesAsync(cancellationToken);
 
-    return workspace.Adapt<CreateWorkspaceResult>();
+    return new CreateWorkspaceResult(true, workspace.Id);
   }
 }

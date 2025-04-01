@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Workspaces/Dtos/" />
-    <Folder Include="Workspaces/Features/" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="../../../Shared/Shared/Shared.csproj" />
   </ItemGroup>
 
