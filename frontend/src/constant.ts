@@ -1,0 +1,2 @@
+export const NEXT_PUBLIC_API_HOST_ADDRESS = process.env.NEXT_PUBLIC_API_HOST_ADDRESS as string;
+export const NEXT_PUBLIC_SEFL_HOST_ADDRESS = process.env.NEXT_PUBLIC_SEFL_HOST_ADDRESS as string;
