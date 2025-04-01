@@ -21,4 +21,9 @@ public class Project : Entity<Guid>
     Name = name;
     ImgUrl = imgurl;
   }
+
+  public void UpdateImgUrl(string imgUrl)
+  {
+    ImgUrl = imgUrl;
+  }
 }

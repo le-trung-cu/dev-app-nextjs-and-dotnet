@@ -1,12 +1,12 @@
-"use client"
+"use client";
 
 import {
   Folder,
   Forward,
   MoreHorizontal,
+  PlusCircle,
   Trash2,
-  type LucideIcon,
-} from "lucide-react"
+} from "lucide-react";
 
 import {
   DropdownMenu,
@@ -14,7 +14,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -23,30 +23,43 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import { useWorkspaceId } from "../../workspaces/hooks/use-workspace-id";
+import { useGetProjects } from "../api/use-get-projects";
+import { ProjectAvatar } from "./project-avatar";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { useCreateProjectDialog } from "../hooks/use-create-project-dialog";
 
-export function NavProjects({
-  projects,
-}: {
-  projects: {
-    name: string
-    url: string
-    icon: LucideIcon
-  }[]
-}) {
-  const { isMobile } = useSidebar()
+export function NavProjects() {
+  const { isMobile } = useSidebar();
+  const workspaceId = useWorkspaceId();
+  const { data: projects } = useGetProjects({ workspaceId });
+  const { open } = useCreateProjectDialog();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Projects</SidebarGroupLabel>
+      <div className="flex items-center justify-between">
+        <SidebarGroupLabel>Projects</SidebarGroupLabel>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-8 p-1"
+          onClick={open}
+        >
+          <PlusCircle className="size-5 text-muted-foreground" />
+        </Button>
+      </div>
       <SidebarMenu>
-        {projects.map((item) => (
-          <SidebarMenuItem key={item.name}>
+        {projects?.map((item) => (
+          <SidebarMenuItem key={item.id}>
             <SidebarMenuButton asChild>
-              <a href={item.url}>
-                <item.icon />
+              <Link
+                href={`/jira/workspaces/${workspaceId}/projects/${item.id}`}
+              >
+                <ProjectAvatar imgUrl={item.imgUrl} name={item.name} />
                 <span>{item.name}</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -85,5 +98,5 @@ export function NavProjects({
         </SidebarMenuItem>
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }

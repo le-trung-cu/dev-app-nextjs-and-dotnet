@@ -70,6 +70,10 @@ public class Workspace : Aggregate<Guid>
   public Project AddProject(string name, string? imgUrl)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(name);
+    if (_projects.Any(x => x.Name == name))
+    {
+      throw new BadRequestException($"Project's Name was exist");
+    }
     if (string.IsNullOrWhiteSpace(imgUrl))
     {
       imgUrl = null;

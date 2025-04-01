@@ -10,9 +10,15 @@ export type Workspace = {
   id: string;
   name: string;
   imgUrl: string;
+  members: []
 }
 
 export type GetWorkspacesResponseType = {
   isSuccess: boolean;
-  workspaces: Workspace[]
+  workspaces: Workspace[];
+}
+
+export type GetWorkspaceByIdResponseType = {
+  isSuccess: boolean;
+  workspace: Workspace;
 }
