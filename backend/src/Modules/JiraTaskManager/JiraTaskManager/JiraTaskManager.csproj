@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data/" />
-    <Folder Include="Workspaces/" />
     <Folder Include="Workspaces/Dtos/" />
-    <Folder Include="Workspaces/Exceptions/" />
     <Folder Include="Workspaces/Features/" />
-    <Folder Include="Workspaces/Models/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../Shared/Shared/Shared.csproj" />
   </ItemGroup>
 
 </Project>

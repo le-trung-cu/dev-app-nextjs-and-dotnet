@@ -16,7 +16,9 @@ public class EmailSenderService(IResend resend) : IEmailSender<User>
       <p>Thanks</p>
     ";
 
-    await SendMailAsync(email, subject, body);
+    // await SendMailAsync(email, subject, body);
+    await Task.CompletedTask;
+
   }
 
   public async Task SendPasswordResetCodeAsync(User user, string email, string resetCode)
@@ -30,7 +32,9 @@ public class EmailSenderService(IResend resend) : IEmailSender<User>
       <p>Thanks</p>
     ";
 
-    await SendMailAsync(email, subject, body);
+    // await SendMailAsync(email, subject, body);
+    await Task.CompletedTask;
+
   }
 
   public async Task SendPasswordResetLinkAsync(User user, string email, string resetLink)
@@ -44,7 +48,9 @@ public class EmailSenderService(IResend resend) : IEmailSender<User>
       <p>Thanks</p>
     ";
 
-    await SendMailAsync(email, subject, body);
+    // await SendMailAsync(email, subject, body);
+    await Task.CompletedTask;
+
   }
 
   private async Task SendMailAsync(string email, string subject, string body)
@@ -60,7 +66,7 @@ public class EmailSenderService(IResend resend) : IEmailSender<User>
 
     Console.WriteLine(message.HtmlBody);
 
-    await resend.EmailSendAsync(message);
-    // await Task.CompletedTask;
+    // await resend.EmailSendAsync(message);
+    await Task.CompletedTask;
   }
 }

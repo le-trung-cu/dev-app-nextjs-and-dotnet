@@ -2,7 +2,6 @@ using Auth.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Resend;
 
 namespace Auth;
 
@@ -10,6 +9,12 @@ public static class AuthModule
 {
   public static IServiceCollection AddAuthModule(this IServiceCollection services, IConfiguration configuration)
   {
+    services.AddScoped(provider =>
+    {
+      var httpContext = provider.GetRequiredService<IHttpContextAccessor>().HttpContext;
+      return httpContext?.User ?? new ClaimsPrincipal();
+    });
+
     services.AddTransient<IEmailSender<User>, EmailSenderService>();
     services.AddScoped<JwtService>();
 
@@ -17,7 +22,7 @@ public static class AuthModule
       .AddRoles<IdentityRole>()
       .AddEntityFrameworkStores<AuthDbContext>()
       .AddDefaultTokenProviders();
-      
+
     services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
