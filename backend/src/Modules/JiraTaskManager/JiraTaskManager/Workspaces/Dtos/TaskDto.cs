@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace JiraTaskManager.Workspaces.Dtos;
 
 public record TaskDto

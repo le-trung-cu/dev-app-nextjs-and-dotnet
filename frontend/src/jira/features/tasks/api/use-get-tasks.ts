@@ -1,6 +1,7 @@
 import { clients } from "@/lib/clients";
 import { useQuery } from "@tanstack/react-query";
 import { GetTasksRequestType, GetTasksResponseType } from "../types";
+import { Member } from "../../members/types";
 
 export const useGetTasks = (filter: GetTasksRequestType) => {
   const { workspaceId, projectId, assigneeId, endDate, status } = filter;
@@ -33,10 +34,13 @@ export const useGetTasks = (filter: GetTasksRequestType) => {
       if (!response.data.isSuccess) {
         throw new Error("has some error");
       }
-
+      const members = response.data.members.reduce((value, item) => {
+        value[item.id] = item;
+        return value;
+      }, {} as Record<Member["id"], Member>);
       return {
         tasks: response.data.tasks,
-        members: response.data.members,
+        members,
       };
     },
     throwOnError: true,

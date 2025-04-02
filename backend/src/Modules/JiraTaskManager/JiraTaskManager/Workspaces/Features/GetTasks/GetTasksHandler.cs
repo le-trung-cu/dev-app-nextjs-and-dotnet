@@ -1,5 +1,6 @@
 
 using System.Data.SqlTypes;
+using System.Text.Json.Serialization;
 using Auth.Contracts.Auth.Features.GetUsers;
 
 namespace JiraTaskManager.Workspaces.Features.GetTasks;
@@ -59,7 +60,7 @@ public class GetTasksHandler
     var membersResult = from member in members
                   join user in usersResul.Users
                   on member.UserId equals user.Id
-                  select new MemberDto(query.WorkspaceId, user.Id, member.Role, user.Name, user.Email);
+                  select new MemberDto( member.Id, query.WorkspaceId, user.Id, member.Role, user.Name, user.Email);
 
     return new GetTasksResult(true, tasks.Adapt<IEnumerable<TaskDto>>(), membersResult.Adapt<IEnumerable<MemberDto>>());
   }

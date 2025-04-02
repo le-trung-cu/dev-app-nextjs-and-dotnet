@@ -13,7 +13,7 @@ export type GetTasksRequestType = {
   workspaceId: string;
   projectId?: string | null;
   assigneeId?: string | null;
-  status?: "Backlog" | "Todo" | "InProgress" | "InReview" | "Done" | null;
+  status?: string | null;
   endDate?: string | null;
 };
 
@@ -24,7 +24,13 @@ export type GetTasksResponseType = {
 }
 
 export type Task = {
-  id: string;
-};
+  id: string,
+  name: string,
+  workspaceId: string;
+  projectId?: string | null;
+  assigneeId?: string | null;
+  status?: "Backlog" | "Todo" | "InProgress" | "InReview" | "Done" | null;
+  endDate?: string | null;
+}
 
 export const StatusValues = ["Backlog" , "Todo" , "InProgress" , "InReview" , "Done"];

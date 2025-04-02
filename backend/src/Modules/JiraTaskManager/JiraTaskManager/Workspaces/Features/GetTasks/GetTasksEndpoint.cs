@@ -1,9 +1,13 @@
+using System.Text.Json.Serialization;
+
 namespace JiraTaskManager.Workspaces.Features.GetTasks;
 
 public record GetTasksRequest
 {
   public Guid? ProjectId { get; set; }
   public Guid? AssigneeId { get; set; }
+  
+  [JsonConverter(typeof(JsonStringEnumConverter))]
   public TaskItemStatus? Status { get; set; }
   public DateTime? EndDate { get; set; }
 }

@@ -23,7 +23,7 @@ public class GetMembersHandler
     var members = from member in workspace.Members
                   join user in usersResult.Users
                   on member.UserId equals user.Id
-                  select new MemberDto(query.WorkspaceId, member.UserId, member.Role, user.Name, user.Email);
+                  select new MemberDto(member.Id, query.WorkspaceId, member.UserId, member.Role, user.Name, user.Email);
 
     return new GetMembersResult(true, members);
   }
