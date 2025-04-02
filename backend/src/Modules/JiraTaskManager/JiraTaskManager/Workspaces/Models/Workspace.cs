@@ -110,28 +110,32 @@ public class Workspace : Aggregate<Guid>
     return project;
   }
 
-  public TaskItem AddTask(Guid projectId, Guid? assigneeId, string name, TaskItemStatus status, DateTime? endDate, string? description)
+  public TaskItem AddTask(Guid? projectId, string? assigneeId, string name, TaskItemStatus status, DateTime? endDate, string? description)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(name);
-    if (assigneeId.HasValue)
+    Guid? memberId = null;
+    if (assigneeId != null)
     {
-      var assignee = _members.FirstOrDefault(x => x.Id == assigneeId.Value)
-        ?? throw new MemberNotFoundException(assigneeId.Value);
+      var assignee = _members.FirstOrDefault(x => x.UserId == assigneeId)
+        ?? throw new MemberNotFoundException(assigneeId);
+      memberId = assignee.Id;
     }
-    var task = new TaskItem(Id, projectId, assigneeId, name, status, endDate, description);
+    var task = new TaskItem(Id, projectId, memberId, name, status, endDate, description);
 
     _tasks.Add(task);
 
     return task;
   }
 
-  public TaskItem UpdateTask(Guid taskId, Guid? projectId, Guid? assigneeId, string name, TaskItemStatus status, DateTime? endDate, string? description)
+  public TaskItem UpdateTask(Guid taskId, Guid? projectId, string? assigneeId, string name, TaskItemStatus status, DateTime? endDate, string? description)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(name);
-    if (assigneeId.HasValue)
+    Guid? memberId = null;
+    if (assigneeId != null)
     {
-      var assignee = _members.FirstOrDefault(x => x.Id == assigneeId.Value)
-        ?? throw new MemberNotFoundException(assigneeId.Value);
+      var assignee = _members.FirstOrDefault(x => x.UserId == assigneeId)
+        ?? throw new MemberNotFoundException(assigneeId);
+      memberId = assignee.Id;
     }
     if (projectId.HasValue)
     {
@@ -141,7 +145,7 @@ public class Workspace : Aggregate<Guid>
 
     var task = _tasks.FirstOrDefault(x => x.Id == taskId) ?? throw new TaskItemNotFoundException(taskId);
 
-    task.Update(projectId, assigneeId, name, status, endDate, description);
+    task.Update(projectId, memberId, name, status, endDate, description);
 
     return task;
   }

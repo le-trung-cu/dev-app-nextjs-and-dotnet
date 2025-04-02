@@ -6,3 +6,8 @@ export type Member = {
   name: string;
   email: string;
 }
+
+export type GetMemberResponseType = {
+  isSuccess: boolean;
+  members: Member[];
+}

@@ -3,9 +3,8 @@ namespace JiraTaskManager.Workspaces.Exceptions;
 public class MemberNotFoundException
   : NotFoundException
 {
-  public MemberNotFoundException(Guid memberId) : base("Member", memberId)
+  public MemberNotFoundException(string userId) : base("Member", userId)
   {
-
   }
 
    public MemberNotFoundException(Guid workspaceId, string userId) : base("Member", $"[${workspaceId}, ${userId}]")

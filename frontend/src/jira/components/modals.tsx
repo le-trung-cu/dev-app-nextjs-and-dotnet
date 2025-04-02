@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { CreateWorkspaceDialog } from "../features/workspaces/components/create-workspace-dialog";
 import { CreateProjectDialog } from "../features/projects/components/create-workspace-dialog";
+import { CreateTaskDialog } from "../features/tasks/components/create-task-dialog";
 
 export const Modals = () => {
   const [mounted, setMounted] = useState(false);
@@ -15,6 +16,7 @@ export const Modals = () => {
     <>
       <CreateWorkspaceDialog />
       <CreateProjectDialog />
+      <CreateTaskDialog/>
     </>
   );
 };
