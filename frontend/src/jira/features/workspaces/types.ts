@@ -6,10 +6,13 @@ export const createWorkspaceSchema = z.object({
   file: z.instanceof(File).nullable(),
 });
 
+export const updateWorkspaceSchema = createWorkspaceSchema;
+
 export type Workspace = {
   id: string;
   name: string;
   imgUrl: string;
+  inviteToken?: string | null;
   members: []
 }
 

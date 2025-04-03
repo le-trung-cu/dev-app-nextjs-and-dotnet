@@ -42,7 +42,7 @@ export const CreateProjectForm = () => {
   const { mutate } = useCreateProject();
 
   const onFormSubmit = (data: z.infer<typeof createProjectSchema>) => {
-    mutate({ workspaceId, data });
+    mutate({ workspaceId, data },  {onSuccess: close});
   };
 
   return (

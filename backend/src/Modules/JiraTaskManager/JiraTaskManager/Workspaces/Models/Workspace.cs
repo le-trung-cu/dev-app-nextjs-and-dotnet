@@ -8,6 +8,7 @@ public class Workspace : Aggregate<Guid>
 {
   public string Name { get; private set; } = default!;
   public string? ImgUrl { get; private set; }
+  public string? InviteToken { get; private set; }
 
   private readonly List<Member> _members = [];
   private readonly List<Project> _projects = [];
@@ -31,10 +32,27 @@ public class Workspace : Aggregate<Guid>
 
     return workspace;
   }
+  
+  public void Update(string name, string? imgUrl)
+  {
+    Name = name;
+    ImgUrl = imgUrl;
+  }
 
   public void UpdateImgUrl(string imgUrl)
   {
     ImgUrl = imgUrl;
+  }
+
+   public string ResetInviteToken(int length = 10)
+  {
+    const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@!#$%^&*_-+=";
+    Random random = new();
+    InviteToken = new string(Enumerable.Range(0, length)
+        .Select(_ => chars[random.Next(chars.Length)])
+        .ToArray());
+
+    return InviteToken;
   }
 
   public Member AddMember(string userId, MemberRole role)
@@ -158,4 +176,5 @@ public class Workspace : Aggregate<Guid>
 
     return task;
   }
+
 }
