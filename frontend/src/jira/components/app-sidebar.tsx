@@ -14,7 +14,7 @@ import {
   SquareTerminal,
 } from "lucide-react"
 
-import { NavMain } from "@/components/nav-main"
+import { NavMain } from "@/jira/components/nav-main"
 import { NavProjects } from "@/jira/features/projects/components/nav-projects";
 import { NavUser } from "@/components/nav-user"
 import {
@@ -163,7 +163,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <WorkspaceSwicher />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain />
         <NavProjects />
       </SidebarContent>
       <SidebarFooter>

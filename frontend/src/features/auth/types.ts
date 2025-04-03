@@ -18,6 +18,7 @@ export const loginSchema = z.object({
 });
 
 type User = {
+  id: string;
   name: string;
   email: string;
   roles: Array<string>;

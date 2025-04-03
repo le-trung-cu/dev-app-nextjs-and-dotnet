@@ -1,73 +1,79 @@
-"use client"
+"use client";
 
-import { ChevronRight, type LucideIcon } from "lucide-react"
+import { CircleCheckIcon, House, Settings, Users2 } from "lucide-react";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible"
 import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuSub,
-  SidebarMenuSubButton,
-  SidebarMenuSubItem,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import { usePathname } from "next/navigation";
+import { useWorkspaceId } from "../features/workspaces/hooks/use-workspace-id";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
-export function NavMain({
-  items,
-}: {
-  items: {
-    title: string
-    url: string
-    icon?: LucideIcon
-    isActive?: boolean
-    items?: {
-      title: string
-      url: string
-    }[]
-  }[]
-}) {
+export function NavMain() {
+  const pathname = usePathname();
+  const workspaceId = useWorkspaceId();
+
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Platform</SidebarGroupLabel>
+      <SidebarGroupLabel>Menus</SidebarGroupLabel>
       <SidebarMenu>
-        {items.map((item) => (
-          <Collapsible
-            key={item.title}
-            asChild
-            defaultOpen={item.isActive}
-            className="group/collapsible"
-          >
-            <SidebarMenuItem>
-              <CollapsibleTrigger asChild>
-                <SidebarMenuButton tooltip={item.title}>
-                  {item.icon && <item.icon />}
-                  <span>{item.title}</span>
-                  <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-                </SidebarMenuButton>
-              </CollapsibleTrigger>
-              <CollapsibleContent>
-                <SidebarMenuSub>
-                  {item.items?.map((subItem) => (
-                    <SidebarMenuSubItem key={subItem.title}>
-                      <SidebarMenuSubButton asChild>
-                        <a href={subItem.url}>
-                          <span>{subItem.title}</span>
-                        </a>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  ))}
-                </SidebarMenuSub>
-              </CollapsibleContent>
+        {menuItems.map((item) => {
+          const fullPath = item.getFullPath({workspaceId});
+          const isActive = pathname === fullPath;
+
+          return (
+            <SidebarMenuItem key={item.text}>
+              <SidebarMenuButton asChild>
+                <Link
+                  href={fullPath}
+                  className={cn(
+                    "flex rounded-lg p-2",
+                    isActive && "bg-stone-300/30",
+                  )}
+                >
+                  <item.icon className="mr-2" />
+                  {item.text}
+                </Link>
+              </SidebarMenuButton>
             </SidebarMenuItem>
-          </Collapsible>
-        ))}
+          );
+        })}
       </SidebarMenu>
     </SidebarGroup>
-  )
+  );
 }
+const menuItems = [
+  {
+    path: "",
+    text: "Home",
+    icon: House,
+    getFullPath: ({ workspaceId }: { workspaceId: string }) =>
+      `/jira/workspaces/${workspaceId}`,
+  },
+  {
+    path: "my-tasks",
+    text: "My Tasks",
+    icon: CircleCheckIcon,
+    getFullPath: ({ workspaceId }: { workspaceId: string }) =>
+      `/jira/workspaces/${workspaceId}/my-tasks`,
+  },
+  {
+    path: "settings",
+    text: "Settings",
+    icon: Settings,
+    getFullPath: ({ workspaceId }: { workspaceId: string }) =>
+      `/jira/workspaces/${workspaceId}/settings`,
+  },
+  {
+    path: "members",
+    text: "Members",
+    icon: Users2,
+    getFullPath: ({ workspaceId }: { workspaceId: string }) =>
+      `/jira/workspaces/${workspaceId}/members`,
+  },
+];
