@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus } from "lucide-react";
+import { Loader, Plus } from "lucide-react";
 import { useCreateTaskDialog } from "../hooks/use-create-task-dialog";
 import { DataFilter } from "./data-filter";
 import { useGetProjects } from "../../projects/api/use-get-projects";
@@ -21,6 +21,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useTaskFilters } from "../hooks/use-task-filters";
 import { parseAsString, useQueryState } from "nuqs";
+import { DataKanban } from "./data-kanban";
 
 export const TasksViewSwicher = () => {
   const { open } = useCreateTaskDialog();
@@ -41,6 +42,8 @@ export const TasksViewSwicher = () => {
     ...filter,
     workspaceId,
   });
+
+  const isLoading = isPendingProjects || isPendingMembers || isPendingTasks;
 
   const mapProjects = useMemo(() => {
     return projects?.reduce(
@@ -80,15 +83,29 @@ export const TasksViewSwicher = () => {
           </div>
           <Separator className="" />
 
-          <TabsContent value="table">
-            <DataTable
-              tasks={tasksData?.tasks ?? []}
-              members={tasksData?.members ?? {}}
-              projects={mapProjects ?? {}}
-            />
-          </TabsContent>
-          <TabsContent value="kanban"></TabsContent>
-          <TabsContent value="calendar"></TabsContent>
+          {isLoading ? (
+            <div className="flex h-[300px] items-center justify-center">
+              <Loader className="animate-spin" />
+            </div>
+          ) : (
+            <>
+              <TabsContent value="table">
+                <DataTable
+                  tasks={tasksData?.tasks ?? []}
+                  members={tasksData?.members ?? {}}
+                  projects={mapProjects ?? {}}
+                />
+              </TabsContent>
+              <TabsContent value="kanban">
+                <DataKanban
+                  tasks={tasksData?.tasks ?? []}
+                  members={tasksData?.members ?? {}}
+                  projects={mapProjects ?? {}}
+                />
+              </TabsContent>
+              <TabsContent value="calendar"></TabsContent>
+            </>
+          )}
         </Tabs>
       </CardContent>
     </Card>

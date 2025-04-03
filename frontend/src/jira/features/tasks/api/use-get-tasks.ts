@@ -6,7 +6,7 @@ import { Member } from "../../members/types";
 export const useGetTasks = (filter: GetTasksRequestType) => {
   const { workspaceId, projectId, assigneeId, endDate, status } = filter;
   const query = useQuery({
-    queryKey: [workspaceId, projectId, assigneeId, endDate, status],
+    queryKey: ["tasks", workspaceId, projectId, assigneeId, endDate, status],
     queryFn: async () => {
       let query: Record<string, unknown> = {
         projectId: projectId || undefined,

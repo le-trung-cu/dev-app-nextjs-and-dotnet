@@ -29,8 +29,9 @@ export type Task = {
   workspaceId: string;
   projectId?: string | null;
   assigneeId?: string | null;
-  status?: "Backlog" | "Todo" | "InProgress" | "InReview" | "Done" | null;
+  status: "Backlog" | "Todo" | "InProgress" | "InReview" | "Done";
   endDate?: string | null;
+  position: number;
 }
 
-export const StatusValues = ["Backlog" , "Todo" , "InProgress" , "InReview" , "Done"];
+export const StatusValues = ["Backlog" , "Todo" , "InProgress" , "InReview" , "Done"] as const;
