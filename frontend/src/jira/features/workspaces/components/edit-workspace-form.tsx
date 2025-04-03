@@ -24,7 +24,6 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
 import { fileToDataURL } from "@/lib/utils";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import {
   NEXT_PUBLIC_API_HOST_ADDRESS,
   NEXT_PUBLIC_SEFL_HOST_ADDRESS,

@@ -25,3 +25,16 @@ export type GetWorkspaceByIdResponseType = {
   isSuccess: boolean;
   workspace: Workspace;
 }
+
+export type GetWorkspaceAnalyticsResponseType = {
+  isSuccess: boolean;
+  workspaceAnalytics: {
+    id: string;
+    name: string;
+    totalProjects: number;
+    totalTasks: number;
+    totalAssignedTasks: number;
+    totalCompletedTasks: number;
+    totalOverdueTasks: number;
+  }
+}
