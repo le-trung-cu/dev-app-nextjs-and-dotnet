@@ -4,7 +4,7 @@ import {
   Droppable,
   DropResult,
 } from "@hello-pangea/dnd";
-import { StatusValues, Task } from "../types";
+import { BulkUpdateTasksRequestType, StatusValues, Task } from "../types";
 import { Member } from "../../members/types";
 import { Project } from "../../projects/types";
 import { useCallback, useEffect, useState } from "react";
@@ -16,9 +16,15 @@ type Props = {
   tasks: Task[];
   members: Record<Member["userId"], Member>;
   projects: Record<Project["id"], Project>;
+  onTasksChange?: (tasks: BulkUpdateTasksRequestType["tasks"]) => void;
 };
 type StatusTypes = (typeof StatusValues)[number];
-export const DataKanban = ({ tasks, members, projects }: Props) => {
+export const DataKanban = ({
+  tasks,
+  members,
+  projects,
+  onTasksChange,
+}: Props) => {
   const [data, setData] = useState(() => {
     const newTasks: Record<StatusTypes, Task[]> = {
       Backlog: [],
@@ -59,26 +65,65 @@ export const DataKanban = ({ tasks, members, projects }: Props) => {
       )
         return;
 
-      const newTasks = { ...data } as Record<string, Task[]>;
-      debugger;
-      const sourceColumn = [...newTasks[source.droppableId]];
-      // update source column
-      let updateItem = sourceColumn.splice(source.index, 1)[0];
-      updateItem.position = (destination.index + 1) * 1000;
-      updateItem.status = destination.droppableId as StatusTypes;
-      updateItem = { ...updateItem };
-      newTasks[source.droppableId] = sourceColumn;
-      if (source.droppableId === destination.droppableId) {
-        sourceColumn.splice(destination.index, 0, updateItem);
-      } else {
-        const destinationColumn = [...newTasks[destination.droppableId]];
-        destinationColumn.splice(destination.index, 0, updateItem);
-        newTasks[destination.droppableId] = destinationColumn;
-        console.log("source", source);
-        console.log("destination", destination);
-      }
+      let updates = new Array<{
+        id: string;
+        status: string;
+        position: number;
+      }>();
 
-      setData(newTasks);
+      setData((data) => {
+        updates = [];
+        const newTasks = { ...data } as Record<string, Task[]>;
+        const sourceColumn = [...newTasks[source.droppableId]];
+        // update source column
+        let updateItem = sourceColumn.splice(source.index, 1)[0];
+        updateItem.position = (destination.index + 1) * 1000;
+        updateItem.status = destination.droppableId as StatusTypes;
+        updateItem = { ...updateItem };
+        newTasks[source.droppableId] = sourceColumn;
+        if (source.droppableId === destination.droppableId) {
+          sourceColumn.splice(destination.index, 0, updateItem);
+        } else {
+          const destinationColumn = [...newTasks[destination.droppableId]];
+          destinationColumn.splice(destination.index, 0, updateItem);
+          newTasks[destination.droppableId] = destinationColumn;
+        }
+
+        updates.push({
+          id: updateItem.id,
+          position: updateItem.position,
+          status: destination.droppableId,
+        });
+
+        // Update tasks position
+        newTasks[source.droppableId].forEach((item, index) => {
+          const newPosition = (index + 1) * 1000;
+          if (item.id !== updateItem.id && newPosition !== item.position) {
+            item.position = newPosition;
+            updates.push({
+              id: item.id,
+              status: item.status,
+              position: newPosition,
+            });
+          }
+        });
+
+        newTasks[destination.droppableId].forEach((item, index) => {
+          const newPosition = (index + 1) * 1000;
+          if (item.id !== updateItem.id && newPosition !== item.position) {
+            item.position = newPosition;
+            updates.push({
+              id: item.id,
+              status: item.status,
+              position: newPosition,
+            });
+          }
+        });
+
+        return newTasks;
+      });
+
+      onTasksChange?.(updates);
     },
     [data],
   );

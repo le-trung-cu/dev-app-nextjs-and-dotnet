@@ -1,4 +1,3 @@
-
 namespace JiraTaskManager.Workspaces.Features.CreateTask;
 
 public record CreateTaskCommand : ICommand<CreateTaskResult>
@@ -28,8 +27,11 @@ public class CreateTaskHandler
     var current = workspace.Members.FirstOrDefault(x => x.UserId == userId)
       ?? throw new BadRequestException("UnAuthorize");
 
-    var task = workspace.AddTask(command.ProjectId, command.AssigneeId, command.Name, command.Status, command.EndDate, null);
+    var heightestPosition = await dbContext.TaskItems
+      .CountAsync(x => x.WorkspaceId == command.WorkspaceId && x.Status == command.Status, cancellationToken);
 
+    var task = workspace.AddTask(command.ProjectId, command.AssigneeId, command.Name, command.Status, command.EndDate, null);
+    task.UpdatePosition((heightestPosition + 1) * 1000);
     await dbContext.SaveChangesAsync(cancellationToken);
     return new CreateTaskResult(true, task.Id);
   }

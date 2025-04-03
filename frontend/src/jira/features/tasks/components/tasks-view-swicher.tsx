@@ -9,7 +9,7 @@ import { useWorkspaceId } from "../../workspaces/hooks/use-workspace-id";
 import { useGetTasks } from "../api/use-get-tasks";
 import { useGetMembers } from "../../members/api/use-get-members";
 import { DataTable } from "./data-table";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { Project } from "../../projects/types";
 import {
   Card,
@@ -22,6 +22,8 @@ import { Separator } from "@/components/ui/separator";
 import { useTaskFilters } from "../hooks/use-task-filters";
 import { parseAsString, useQueryState } from "nuqs";
 import { DataKanban } from "./data-kanban";
+import { BulkUpdateTasksRequestType } from "../types";
+import { useBulkUpdateTasks } from "../api/use-bulk-update-tasks";
 
 export const TasksViewSwicher = () => {
   const { open } = useCreateTaskDialog();
@@ -54,6 +56,15 @@ export const TasksViewSwicher = () => {
       {} as Record<Project["id"], Project>,
     );
   }, [projects]);
+
+  const { mutate: bullUpdateTasksApi } = useBulkUpdateTasks();
+
+  const onKanbanChange = useCallback(
+    (tasks: BulkUpdateTasksRequestType["tasks"]) => {
+      bullUpdateTasksApi({ workspaceId, tasks });
+    },
+    [workspaceId, bullUpdateTasksApi],
+  );
 
   return (
     <Card>
@@ -101,6 +112,7 @@ export const TasksViewSwicher = () => {
                   tasks={tasksData?.tasks ?? []}
                   members={tasksData?.members ?? {}}
                   projects={mapProjects ?? {}}
+                  onTasksChange={onKanbanChange}
                 />
               </TabsContent>
               <TabsContent value="calendar"></TabsContent>

@@ -14,7 +14,7 @@ public class TaskItem : Entity<Guid>
   public Project? Project { get; private set; }
   public Guid? AssigneeId { get; private set; }
   public Member? Assignee { get; private set; }
-
+  public int Position { get; private set; }
 
   internal TaskItem(Guid workspaceId, Guid? projectId, Guid? assigneeId, string name, TaskItemStatus status, DateTime? endDate, string? description)
   {
@@ -35,5 +35,15 @@ public class TaskItem : Entity<Guid>
     Status = status;
     EndDate = endDate;
     Description = description;
+  }
+
+  public void UpdateStatus(TaskItemStatus status)
+  {
+    Status = status;
+  }
+
+  public void UpdatePosition(int position)
+  {
+    Position = position > 1_000_000 ? 1_000_000 : position;
   }
 }

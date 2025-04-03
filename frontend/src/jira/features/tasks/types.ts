@@ -21,17 +21,31 @@ export type GetTasksResponseType = {
   isSuccess: true;
   tasks: Task[];
   members: Member[];
-}
+};
+
+export type BulkUpdateTasksRequestType = {
+  tasks: {
+    id: string;
+    status: string;
+    position: number;
+  }[];
+};
 
 export type Task = {
-  id: string,
-  name: string,
+  id: string;
+  name: string;
   workspaceId: string;
   projectId?: string | null;
   assigneeId?: string | null;
   status: "Backlog" | "Todo" | "InProgress" | "InReview" | "Done";
   endDate?: string | null;
   position: number;
-}
+};
 
-export const StatusValues = ["Backlog" , "Todo" , "InProgress" , "InReview" , "Done"] as const;
+export const StatusValues = [
+  "Backlog",
+  "Todo",
+  "InProgress",
+  "InReview",
+  "Done",
+] as const;

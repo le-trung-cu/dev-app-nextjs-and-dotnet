@@ -5,7 +5,7 @@ dotnet ef migrations remove -c AuthDbContext -s ../../../Bootstrapper/Api/Api.cs
 dotnet ef migrations add add_Project_table -o ./Data/Migrations -c WorkspaceDbContext -s ../../../Bootstrapper/Api/Api.csproj 
 dotnet ef migrations add add_Status_column_table -o ./Data/Migrations -c WorkspaceDbContext -s ../../../Bootstrapper/Api/Api.csproj 
 dotnet ef migrations add update_nullable_Desctition_Task__column_table -o ./Data/Migrations -c WorkspaceDbContext -s ../../../Bootstrapper/Api/Api.csproj 
-dotnet ef migrations add update_position_Task_table_DDD -o ./Data/Migrations -c WorkspaceDbContext -s ../../../Bootstrapper/Api/Api.csproj 
+dotnet ef migrations add JiraAddPositionColumnInTasks -o ./Data/Migrations -c WorkspaceDbContext -s ../../../Bootstrapper/Api/Api.csproj 
 
 
 dotnet ef migrations add initial -o ./Data/Migrations -c WorkspaceDbContext -s ../../../Bootstrapper/Api/Api.csproj 
