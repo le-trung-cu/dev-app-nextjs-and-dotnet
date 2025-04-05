@@ -16,7 +16,7 @@ import {
 
 import { NavMain } from "@/jira/components/nav-main"
 import { NavProjects } from "@/jira/features/projects/components/nav-projects";
-import { NavUser } from "@/components/nav-user"
+import { NavUser } from "@/slack/components/nav-user"
 import {
   Sidebar,
   SidebarContent,
