@@ -23,6 +23,11 @@ public class Workspace : Aggregate<Guid>
     return workspace;
   }
 
+  public void Update(string name)
+  {
+    Name = name;
+  }
+
   public string ResetInviteToken(int length = 10)
   {
     const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@!#$%^&*_-+=";

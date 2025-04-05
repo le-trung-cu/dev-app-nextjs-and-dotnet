@@ -12,10 +12,12 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronDown, ListFilter, SquarePen } from "lucide-react";
 import { WorkspaceAvatar } from "./workspace-avatar";
+import { usePreferencesDialog } from "../hooks/use-preferences-dialog";
 
 export const WorkspaceHeader = () => {
   const workspaceId = useWorkspaceId();
   const { data: workspace, isPending } = useGetWorkspace({ workspaceId });
+  const  [, setOpenPreference] = usePreferencesDialog();
 
   if (isPending) {
     return (
@@ -60,7 +62,7 @@ export const WorkspaceHeader = () => {
       <Button variant="ghost" className="ml-auto">
         <ListFilter className="size-4"/>
       </Button>
-      <Button variant="ghost">
+      <Button variant="ghost" onClick={() => setOpenPreference(true)}>
         <SquarePen className="size-4"/>
       </Button>
     </header>

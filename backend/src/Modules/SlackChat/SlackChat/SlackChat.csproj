@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Workspaces/Dtos/" />
     <Folder Include="Workspaces/Exceptions/" />
-    <Folder Include="Workspaces/Features/" />
   </ItemGroup>
 
   <ItemGroup>
