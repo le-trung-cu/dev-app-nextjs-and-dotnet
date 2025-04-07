@@ -35,7 +35,7 @@ export const LoginForm = () => {
     },
   });
 
-  const { mutate } = useLogin();
+  const { mutate, isPending } = useLogin();
 
   const onFormSubmit = (data: z.infer<typeof loginSchema>) => {
     mutate(data, {
@@ -82,7 +82,7 @@ export const LoginForm = () => {
               )}
             />
             <div className="flex justify-end">
-              <Button>Login</Button>
+              <Button disabled={isPending}>Login</Button>
             </div>
           </form>
         </Form>

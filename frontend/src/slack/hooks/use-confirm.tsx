@@ -52,7 +52,7 @@ export const useConfirm = () => {
           <DialogDescription>{state.description}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button onClick={onCancel}>Cancel</Button>
+          <Button variant="outline" onClick={onCancel}>Cancel</Button>
           <Button onClick={onConfirm}>Confirm</Button>
         </DialogFooter>
       </DialogContent>

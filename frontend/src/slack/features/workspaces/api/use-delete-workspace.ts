@@ -13,8 +13,10 @@ export const useDeleteWorkspace = () => {
         throw new Error("has some error");
       }
     },
-    onSuccess: () => {
+    onSuccess: (data, {workspaceId}) => {
       queryClient.removeQueries({ queryKey: ["workspaces"] });
+      queryClient.removeQueries({ queryKey: ["workspaces", workspaceId] });
+      queryClient.removeQueries({ queryKey: ["workspace-info", workspaceId] });
       toast.success("Delete workspace succes");
     },
     onError: (error) => {

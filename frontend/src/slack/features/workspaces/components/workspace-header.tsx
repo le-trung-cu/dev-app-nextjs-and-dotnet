@@ -13,11 +13,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronDown, ListFilter, SquarePen } from "lucide-react";
 import { WorkspaceAvatar } from "./workspace-avatar";
 import { usePreferencesDialog } from "../hooks/use-preferences-dialog";
+import { InviteDialog } from "./invite-dialog";
+import { useInviteDialog } from "../hooks/use-invite-dialog";
 
 export const WorkspaceHeader = () => {
   const workspaceId = useWorkspaceId();
   const { data: workspace, isPending } = useGetWorkspace({ workspaceId });
-  const  [, setOpenPreference] = usePreferencesDialog();
+  const [, setOpenPreference] = usePreferencesDialog();
+  const [open, setOpen] = useInviteDialog();
 
   if (isPending) {
     return (
@@ -31,40 +34,50 @@ export const WorkspaceHeader = () => {
     throw new Error("Workspace not found");
   }
   return (
-    <header className="flex items-center">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost">
-            {workspace.name} <ChevronDown />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent>
-          <DropdownMenuItem>
-            <div className="flex items-center">
-              <WorkspaceAvatar
-                name={workspace.name}
-                className="mr-2 size-10 shrink-0"
-              />
-              <div className="">
-                <div className="text-xl font-bold">{workspace.name}</div>
-                <div className="text-muted-foreground text-xs">
-                  Active Workspace
+    <>
+      <InviteDialog
+        open={open}
+        onOpenChange={setOpen}
+        inviteCode={workspace.inviteToken!}
+        name={workspace.name}
+      />
+      <header className="flex items-center">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost">
+              {workspace.name} <ChevronDown />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem>
+              <div className="flex items-center">
+                <WorkspaceAvatar
+                  name={workspace.name}
+                  className="mr-2 size-10 shrink-0"
+                />
+                <div className="">
+                  <div className="text-xl font-bold">{workspace.name}</div>
+                  <div className="text-muted-foreground text-xs">
+                    Active Workspace
+                  </div>
                 </div>
               </div>
-            </div>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Invire peolpe to {workspace.name}</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Preferences</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <Button variant="ghost" className="ml-auto">
-        <ListFilter className="size-4"/>
-      </Button>
-      <Button variant="ghost" onClick={() => setOpenPreference(true)}>
-        <SquarePen className="size-4"/>
-      </Button>
-    </header>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => setOpen(true)}>
+              Invite peolpe to {workspace.name}
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Preferences</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <Button variant="ghost" className="ml-auto">
+          <ListFilter className="size-4" />
+        </Button>
+        <Button variant="ghost" onClick={() => setOpenPreference(true)}>
+          <SquarePen className="size-4" />
+        </Button>
+      </header>
+    </>
   );
 };

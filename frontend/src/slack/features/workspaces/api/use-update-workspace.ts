@@ -22,12 +22,11 @@ export const useUpdateWorkspace = () => {
 
       return response.data;
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (data, { workspaceId }) => {
       toast.success("Update workspace success!");
       queryClient.invalidateQueries({ queryKey: ["workspaces"] });
-      queryClient.invalidateQueries({
-        queryKey: ["workspace", variables.workspaceId],
-      });
+      queryClient.invalidateQueries({ queryKey: ["workspace", workspaceId] });
+      queryClient.invalidateQueries({ queryKey: ["workspace-info", workspaceId] });
     },
     onError: (error) => {
       toast.error(error.message);

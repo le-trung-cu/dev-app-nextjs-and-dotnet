@@ -8,5 +8,6 @@ dotnet ef migrations add update_nullable_Desctition_Task__column_table -o ./Data
 dotnet ef migrations add JiraAddPositionColumnInTasks -o ./Data/Migrations -c WorkspaceDbContext -s ../../../Bootstrapper/Api/Api.csproj 
 
 
-dotnet ef migrations add AddMemberSlackMigration -o ./Data/Migrations -c SlackChat.Data.WorkspaceDbContext -s ../../../Bootstrapper/Api/Api.csproj 
+dotnet ef migrations add AddMessageSlackMigration -o ./Data/Migrations -c SlackChat.Data.WorkspaceDbContext -s ../../../Bootstrapper/Api/Api.csproj 
+
 dotnet ef database update -c SlackChat.Data.WorkspaceDbContext

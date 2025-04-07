@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Workspaces/Dtos/" />
-    <Folder Include="Workspaces/Exceptions/" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="../../../Shared/Shared/Shared.csproj" />
     <ProjectReference Include="../../Auth/Auth.Contracts/Auth.Contracts.csproj" />
   </ItemGroup>

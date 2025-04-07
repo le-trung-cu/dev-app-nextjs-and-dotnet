@@ -15,10 +15,10 @@ export const useResetInviteToken = () => {
       }
       return "ok";
     },
-    onSuccess: () => {
+    onSuccess: (data, { workspaceId }) => {
       toast.success("update invite token success");
       queryClient.invalidateQueries({
-        queryKey: ["workspaces"],
+        queryKey: ["workspaces", workspaceId],
       });
     },
     onError: (error) => {

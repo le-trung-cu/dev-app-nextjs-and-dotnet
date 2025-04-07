@@ -23,6 +23,38 @@ namespace SlackChat.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("SlackChat.Workspaces.Models.Channel", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LasetModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("WorkspaceId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("WorkspaceId");
+
+                    b.ToTable("Channels", "slack_chat");
+                });
+
             modelBuilder.Entity("SlackChat.Workspaces.Models.Member", b =>
                 {
                     b.Property<Guid>("Id")
@@ -58,6 +90,52 @@ namespace SlackChat.Data.Migrations
                     b.ToTable("Members", "slack_chat");
                 });
 
+            modelBuilder.Entity("SlackChat.Workspaces.Models.Message", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("ChannelId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImgUrl")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LasetModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("MemberId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("ParentMessageId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("WorkspaceId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChannelId");
+
+                    b.HasIndex("ParentMessageId");
+
+                    b.ToTable("Messages", "slack_chat");
+                });
+
             modelBuilder.Entity("SlackChat.Workspaces.Models.Workspace", b =>
                 {
                     b.Property<Guid>("Id")
@@ -89,6 +167,15 @@ namespace SlackChat.Data.Migrations
                     b.ToTable("Workspaces", "slack_chat");
                 });
 
+            modelBuilder.Entity("SlackChat.Workspaces.Models.Channel", b =>
+                {
+                    b.HasOne("SlackChat.Workspaces.Models.Workspace", null)
+                        .WithMany("Channels")
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("SlackChat.Workspaces.Models.Member", b =>
                 {
                     b.HasOne("SlackChat.Workspaces.Models.Workspace", null)
@@ -98,8 +185,35 @@ namespace SlackChat.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SlackChat.Workspaces.Models.Message", b =>
+                {
+                    b.HasOne("SlackChat.Workspaces.Models.Channel", null)
+                        .WithMany("Messages")
+                        .HasForeignKey("ChannelId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SlackChat.Workspaces.Models.Message", "ParentMessage")
+                        .WithMany("Children")
+                        .HasForeignKey("ParentMessageId");
+
+                    b.Navigation("ParentMessage");
+                });
+
+            modelBuilder.Entity("SlackChat.Workspaces.Models.Channel", b =>
+                {
+                    b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("SlackChat.Workspaces.Models.Message", b =>
+                {
+                    b.Navigation("Children");
+                });
+
             modelBuilder.Entity("SlackChat.Workspaces.Models.Workspace", b =>
                 {
+                    b.Navigation("Channels");
+
                     b.Navigation("Members");
                 });
 #pragma warning restore 612, 618

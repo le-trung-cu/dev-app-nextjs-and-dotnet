@@ -1,12 +1,19 @@
-import { useGetWorkspaces } from "./use-get-workspaces";
+import { useQuery } from "@tanstack/react-query";
+import { clients } from "@/lib/clients";
+import { GetWorkspaceByIdResponseType } from "../types";
 
-export const useGetWorkspace = ({
-  workspaceId,
-}: {
-  workspaceId: string;
-}) => {
-  const result = useGetWorkspaces();
-  const workspace = result.data?.find((x) => x.id === workspaceId);
-  console.log(workspace)
-  return { ...result, data: workspace };
+export const useGetWorkspace = ({ workspaceId }: { workspaceId: string }) => {
+  const request = useQuery({
+    queryKey: ["workspaces", workspaceId],
+    queryFn: async () => {
+      const response = await clients.get<GetWorkspaceByIdResponseType>(
+        `/api/slack/workspaces/${workspaceId}`,
+      );
+      if (!response.data.isSuccess) {
+        throw new Error("has some erro");
+      }
+      return response.data.workspace;
+    },
+  });
+  return request;
 };
