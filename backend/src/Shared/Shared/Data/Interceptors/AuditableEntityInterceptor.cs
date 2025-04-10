@@ -31,7 +31,7 @@ public class AuditableEntityInterceptor(IHttpContextAccessor httpContextAccessor
     {
       if (entry.State == EntityState.Added)
       {
-        entry.Entity.CreatedBy = userName; //Hey GPT làm sao lấy thôn tin người đang đăng nhập
+        entry.Entity.CreatedBy = userName;
         entry.Entity.CreatedAt = DateTime.UtcNow;
       }
 
