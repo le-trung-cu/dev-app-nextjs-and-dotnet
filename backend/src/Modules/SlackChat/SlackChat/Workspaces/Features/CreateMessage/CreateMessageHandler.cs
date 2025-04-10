@@ -5,10 +5,11 @@ namespace SlackChat.Workspaces.Features.CreateMessage;
 
 public record CreateMessageCommand(
   Guid WorkspaceId,
-  Guid ChannelId,
+  Guid? ChannelId,
   string Body,
   IFormFile? Image,
-  Guid? ParentMessageId
+  Guid? ParentMessageId,
+  Guid? ConversationId
 ) : ICommand<CreateMessageResult>;
 
 public record CreateMessageResult(bool IsSuccess, Guid MessageId);
@@ -25,15 +26,20 @@ public class CreateMessageHandler
       .FirstOrDefaultAsync(cancellationToken)
       ?? throw new BadRequestException("Unauthorized");
 
-    var channelQuery = dbContext.Channels
-      .Where(x => x.Id == command.ChannelId && x.WorkspaceId == command.WorkspaceId);
-    if (command.ParentMessageId.HasValue)
+    var workspaceQuery = dbContext.Workspaces
+      .Where(x => x.Id == command.WorkspaceId);
+    if(command.ChannelId.HasValue)
     {
-      channelQuery = channelQuery.Include(x => x.Messages.Where(t => t.Id == command.ParentMessageId.Value));
+      workspaceQuery = workspaceQuery.Include(x => x.Channels.Where(t => t.Id == command.ChannelId.Value));
     }
 
-    var channel = await channelQuery.FirstOrDefaultAsync(cancellationToken)
-      ?? throw new ChannelNotFoundException(command.ChannelId);
+    if (command.ParentMessageId.HasValue)
+    {
+      workspaceQuery = workspaceQuery.Include(x => x.Messages.Where(t => t.Id == command.ParentMessageId.Value));
+    }
+
+    var workspace = await workspaceQuery.FirstOrDefaultAsync(cancellationToken)
+      ?? throw new WorkspaceNotFoundException(command.WorkspaceId);
     
     string? imageUrl = null;
     if(command.Image != null)
@@ -41,7 +47,7 @@ public class CreateMessageHandler
       imageUrl = await fileService.SaveFileAsync(command.Image, Path.Combine("uploads", "slack", "messages"), cancellationToken);
     }
 
-    var message = channel.AddMessage(command.Body, imageUrl, member.Id, command.ParentMessageId);
+    var message = workspace.AddMessage(command.ChannelId, command.Body, imageUrl, member.Id, command.ParentMessageId, command.ConversationId);
 
     await dbContext.SaveChangesAsync(cancellationToken);
 

@@ -14,18 +14,21 @@ import { useState } from "react";
 
 type EmojiPopoverProps = {
   children: React.ReactNode;
-  onEmojiSelect?: (emoji: {native: string}) => void;
-}
+  onEmojiSelect?: (emoji: { native: string }) => void;
+};
 
-export const EmojiPopover = ({ children, onEmojiSelect }:EmojiPopoverProps) => {
+export const EmojiPopover = ({
+  children,
+  onEmojiSelect,
+}: EmojiPopoverProps) => {
   const [popoverOpen, setPopoverOpen] = useState(false);
   // const [tooltipOpen, setTooltipOpen] = useState(false);
-  const onEmojiSelectHandler = (emoji: {native: string}) => {
+  const onEmojiSelectHandler = (emoji: { native: string }) => {
     setPopoverOpen(false);
     onEmojiSelect?.(emoji);
-  }
+  };
   return (
-    <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+    <Popover modal={false} open={popoverOpen} onOpenChange={setPopoverOpen}>
       <Tooltip delayDuration={50}>
         <PopoverTrigger asChild>
           <TooltipTrigger asChild>{children}</TooltipTrigger>
@@ -33,7 +36,7 @@ export const EmojiPopover = ({ children, onEmojiSelect }:EmojiPopoverProps) => {
         <TooltipContent className="z-[9999]">Emoji</TooltipContent>
       </Tooltip>
       <PopoverContent className="z-[9999]">
-        <EmojiPicker data={data} onEmojiSelect={onEmojiSelectHandler}/>
+        <EmojiPicker data={data} onEmojiSelect={onEmojiSelectHandler} />
       </PopoverContent>
     </Popover>
   );

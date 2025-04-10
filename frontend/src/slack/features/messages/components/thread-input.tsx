@@ -2,12 +2,13 @@ import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRef, useState } from "react";
 import Quill from "quill";
-import { useCreateMessage } from "../../messages/api/use-create-message";
+import { useCreateMessage } from "../api/use-create-message";
 import { useWorkspaceId } from "../../workspaces/hooks/use-workspace-id";
-import { useChannelId } from "../hooks/use-channel-id";
-import { EditorValue } from "./editor";
+import { EditorValue } from "../../channels/components/editor";
+import { useParentMessageId } from "../hooks/use-parent-message-id";
+import { useChannelId } from "../../channels/hooks/use-channel-id";
 
-const Editor = dynamic(() => import("./editor"), {
+const Editor = dynamic(() => import("../../channels/components/editor"), {
   ssr: false,
   loading: () => (
     <div className="space-y-2 border p-2">
@@ -30,8 +31,9 @@ type ChatInputProps = {
   placeholder: string;
 };
 
-export const ChatInput = ({ placeholder }: ChatInputProps) => {
+export const ThreadInput = ({ placeholder }: ChatInputProps) => {
   const [editorKey, setEditorKey] = useState(1);
+  const [parentMessageId] = useParentMessageId(); 
 
   const workspaceId = useWorkspaceId();
   const channelId = useChannelId();
@@ -39,20 +41,17 @@ export const ChatInput = ({ placeholder }: ChatInputProps) => {
   const editorRef = useRef<Quill | null>(null);
   const { mutate, isPending } = useCreateMessage();
   const onSumbit = ({ body, image }: EditorValue) => {
-    editorRef.current?.disable();
     mutate(
-      { workspaceId, channelId, body, image },
+      { workspaceId, channelId, body, image , parentMessageId},
       {
         onSuccess: () => {
           setEditorKey((x) => x + 1);
         },
-        onSettled: () => {
-          editorRef.current?.enable();
-        }
       },
+      
     );
   };
-
+  if(!parentMessageId) return null;
   return (
     <div className="relative z-[9999] w-full px-5 bg-background">
       <Editor

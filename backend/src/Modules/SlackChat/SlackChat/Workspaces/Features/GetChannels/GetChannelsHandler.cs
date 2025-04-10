@@ -22,7 +22,7 @@ public class GetChannelsHandler
     var channels = await dbContext.Channels
       .AsNoTracking()
       .Where(x => x.WorkspaceId == query.WorkspaceId)
-      .Select(x => new ChannelDto(x.Id, x.Name))
+      .ProjectToType<ChannelDto>()
       .ToListAsync(cancellationToken);
     
     return new GetChannelsResult(true, channels);

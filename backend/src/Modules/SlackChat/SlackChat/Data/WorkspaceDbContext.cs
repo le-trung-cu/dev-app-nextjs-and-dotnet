@@ -6,6 +6,7 @@ public class WorkspaceDbContext(DbContextOptions<WorkspaceDbContext> options) : 
   public DbSet<Member> Members => Set<Member>();
   public DbSet<Channel> Channels => Set<Channel>();
   public DbSet<Message> Messages => Set<Message>();
+  public DbSet<Reaction> Reactions => Set<Reaction>();
 
   protected override void OnModelCreating(ModelBuilder builder)
   {

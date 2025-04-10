@@ -9,6 +9,7 @@ export const updateChanbelSchema = createChannelSchema;
 export type Channel = {
   id: string;
   name: string;
+  createdAt: string;
 }
 
 export type GetChannelsResponseType = {

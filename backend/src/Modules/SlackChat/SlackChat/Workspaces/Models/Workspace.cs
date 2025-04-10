@@ -11,6 +11,13 @@ public class Workspace : Aggregate<Guid>
   public IReadOnlyList<Member> Members => _members.AsReadOnly();
   public IReadOnlyList<Channel> Channels => _channels.AsReadOnly();
 
+  private readonly List<Message> _messages = [];
+
+  public IReadOnlyList<Message> Messages => _messages.AsReadOnly();
+
+  private readonly List<Conversation> _conversations = [];
+  public IReadOnlyList<Conversation> Conversations => _conversations.AsReadOnly();
+
   private Workspace(string name)
   {
     Name = name;
@@ -96,5 +103,51 @@ public class Workspace : Aggregate<Guid>
     _channels.Remove(channel);
 
     return channel;
+  }
+
+  public Message AddMessage(Guid? channelId, string body, string? imgUrl, Guid memberId, Guid? parentMessageId, Guid? conversationId)
+  {
+    Channel? channel = null;
+    Message? parentMessage = null;
+    if (channelId.HasValue)
+    {
+      channel = _channels.FirstOrDefault(x => x.Id == channelId.Value)
+        ?? throw new ChannelNotFoundException(channelId.Value);
+    }
+    if (parentMessageId.HasValue)
+    {
+      parentMessage = _messages.FirstOrDefault(x => x.Id == parentMessageId.Value)
+        ?? throw new MessageNotFoundException(parentMessageId.Value);
+    }
+
+    // Only possible if we are replying in a thread in 1:1 conversation
+    if (!conversationId.HasValue && !channelId.HasValue && parentMessageId.HasValue)
+    {
+      conversationId = parentMessage!.ConversationId;
+    }
+
+    var message = new Message(body, imgUrl, memberId, Id, channelId, parentMessageId, conversationId);
+    _messages.Add(message);
+
+    return message;
+  }
+
+  public Message UpdateMessage(Guid messageId, string body)
+  {
+    ArgumentException.ThrowIfNullOrWhiteSpace(body);
+
+    var message = _messages.FirstOrDefault(x => x.Id == messageId)
+      ?? throw new MessageNotFoundException(messageId);
+    message.Update(body);
+
+    return message;
+  }
+
+  public Message DeleteMessage(Guid messageId)
+  {
+    var message = _messages.FirstOrDefault(x => x.Id == messageId)
+      ?? throw new MessageNotFoundException(messageId);
+    _messages.Remove(message);
+    return message;
   }
 }

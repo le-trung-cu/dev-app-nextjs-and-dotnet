@@ -7,7 +7,8 @@ public record GetMembersQuery(Guid WorkspaceId) : IQuery<GetMembersResult>;
 
 public record GetMembersResult(bool IsSuccess, IEnumerable<MemberDto> Members);
 public class GetMembersHandler
-  (WorkspaceDbContext dbContext, ISender sender): IQueryHandler<GetMembersQuery, GetMembersResult>
+  (WorkspaceDbContext dbContext, ISender sender)
+  : IQueryHandler<GetMembersQuery, GetMembersResult>
 {
   public async Task<GetMembersResult> Handle(GetMembersQuery query, CancellationToken cancellationToken)
   {

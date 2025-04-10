@@ -26,7 +26,7 @@ type EditorProps = {
 
 export default function Editor({
   onSubmit,
-  // onCancel,
+  onCancel,
   placeholder = "Write something...",
   defaultValue = [],
   disabled = false,
@@ -195,7 +195,7 @@ export default function Editor({
               disabled={disabled || isEmpty}
               onClick={() => {
                 onSubmit({
-                  body:  JSON.stringify(quillRef.current?.getContents()),
+                  body: JSON.stringify(quillRef.current?.getContents()),
                   image,
                 });
               }}
@@ -205,10 +205,24 @@ export default function Editor({
           )}
           {variant === "update" && (
             <>
-              <Button variant="outline" className="mr-2 ml-auto">
+              <Button
+                variant="outline"
+                className="mr-2 ml-auto"
+                onClick={onCancel}
+              >
                 Cancel
               </Button>
-              <Button disabled={disabled || isEmpty}>Save</Button>
+              <Button
+                disabled={disabled || isEmpty}
+                onClick={() =>
+                  onSubmit({
+                    body: JSON.stringify(quillRef.current?.getContents()),
+                    image: null,
+                  })
+                }
+              >
+                Save
+              </Button>
             </>
           )}
         </div>

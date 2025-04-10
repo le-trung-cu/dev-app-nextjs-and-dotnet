@@ -8,10 +8,12 @@ export default function SlackLayout({
 }) {
   return (
     <>
-    <JotaiProvioder>
-      {children}
-      <Modals />
-    </JotaiProvioder>
+      <div className="slack">
+        <JotaiProvioder>
+          {children}
+          <Modals />
+        </JotaiProvioder>
+      </div>
     </>
   );
 }
