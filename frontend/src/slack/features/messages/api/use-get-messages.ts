@@ -1,9 +1,10 @@
 import { clients } from "@/lib/clients";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { GetMessagesResponseType } from "../types";
+import { GetMessagesResponseType, Message, PaginationMessages } from "../types";
 import { useGetMembers } from "../../members/api/use-get-members";
 import { useEffect, useMemo, useRef } from "react";
 import { Member } from "../../members/types";
+import { format } from "date-fns";
 
 export const useGetMessages = ({
   workspaceId,
@@ -12,26 +13,28 @@ export const useGetMessages = ({
 }: {
   workspaceId: string;
   channelId?: string;
-  parentMessageId?: string|null;
+  parentMessageId?: string | null;
 }) => {
   const queryMembers = useGetMembers({ workspaceId });
 
-  const queryMessages = useInfiniteQuery<GetMessagesResponseType>({
+  const queryMessages = useInfiniteQuery<PaginationMessages>({
     queryKey: ["messages", workspaceId, channelId, parentMessageId],
     initialPageParam: null,
     getNextPageParam: (lastPage, allPages) => {
       console.log(lastPage, allPages);
-      return lastPage.data.length < lastPage.pageSize? undefined : lastPage.cursor;
+      return lastPage.ids.length < lastPage.pageSize
+        ? undefined
+        : lastPage.cursor;
     },
-    queryFn: async ({ pageParam = 1 }) => {
+    queryFn: async ({ pageParam = 1 }): Promise<PaginationMessages> => {
       const queryArr = [];
       if (channelId) {
         queryArr.push(`channelId=${channelId}`);
       }
-      if(parentMessageId) {
-        queryArr.push(`parentMessageId=${parentMessageId}`)
+      if (parentMessageId) {
+        queryArr.push(`parentMessageId=${parentMessageId}`);
       }
-      if(pageParam) {
+      if (pageParam) {
         queryArr.push(`cursor=${pageParam}`);
       }
 
@@ -43,7 +46,50 @@ export const useGetMessages = ({
         `/api/slack/workspaces/${workspaceId}/messages?${queryString}&pageSize=${10}`,
       );
       if (response.data.isSuccess) {
-        return response.data;
+        const reactionCounts = response.data.reactionCounts.reduce(
+          (group, reaction) => {
+            if (!group[reaction.messageId]) {
+              group[reaction.messageId] = [];
+            }
+            group[reaction.messageId].push(reaction);
+            return group;
+          },
+          {} as Record<
+            Message["id"],
+            GetMessagesResponseType["reactionCounts"][number][]
+          >,
+        );
+
+        const threads = response.data.threads.reduce(
+          (group, thread) => {
+            group[thread.parentMessageId] = thread;
+            return group;
+          },
+          {} as Record<string, GetMessagesResponseType["threads"][number]>,
+        );
+
+        const ids = response.data.data.map((x) => x.id);
+        const messages = response.data.data.reduce(
+          (group, message) => {
+            group[message.id] = {
+              message: message,
+              reactions: reactionCounts[message.id],
+              threads: threads[message.id],
+            };
+            return group;
+          },
+          {} as Record<
+            Message["id"],
+            PaginationMessages["messages"][keyof PaginationMessages["messages"]]
+          >,
+        );
+
+        return {
+          cursor: response.data.cursor,
+          pageSize: response.data.pageSize,
+          ids,
+          messages,
+        };
       }
       throw new Error("has some error");
     },
@@ -65,14 +111,12 @@ export const useGetMessages = ({
   useEffect(() => {
     if (!queryMessagesRef.current) return;
 
-    const missing = new Set<string>();
-    queryMessagesRef.current.pages.forEach((page) => {
-      page.data.forEach((msg) => {
-        if (!memberMap.has(msg.memberId)) {
-          missing.add(msg.memberId);
-        }
-      });
+    const memberIds = queryMessagesRef.current.pages.flatMap(page => {
+      return Object.entries(page.messages).map(([, message]) => message.message.memberId)
     });
+    const memberSet = new Set(memberIds);
+
+    const missing = memberSet.difference(new Set(memberMap.keys()));
 
     if (missing.size > 0) {
       queryMembersRef.current.refetch();
@@ -83,40 +127,30 @@ export const useGetMessages = ({
     queryMembersRef.current.refetch,
   ]);
 
-  const allMessages = useMemo(() => {
-    return queryMessages.data?.pages.flatMap((page) => {
-      const threads = page.threads.reduce(
-        (threads, thread) => {
-          threads[thread.parentMessageId] = thread;
-          return threads;
-        },
-        {} as Record<string, GetMessagesResponseType["threads"][number]>,
-      );
+  // const allMessages = useMemo(() => {
+  //   return queryMessages.data?.pages.flatMap((page) => {
+  //    return page.ids.map(id => page.messages[id]);
+  //   });
+  // }, [queryMessages.data]);
 
-      const reactionCount = page.reactionCounts.reduce(
-        (reactionCount, reaction) => {
-          if (!reactionCount[reaction.messageId]) {
-            reactionCount[reaction.messageId] = [];
-          }
-          reactionCount[reaction.messageId].push(reaction);
-          return reactionCount;
-        },
-        {} as Record<
-          string,
-          GetMessagesResponseType["reactionCounts"][number][]
-        >,
-      );
-
-      return page.data.map((msg) => ({
-        ...msg,
-        threads: threads[msg.id],
-        reactions: reactionCount[msg.id],
-      }));
-    });
+  const groupedMessages = useMemo(() => {
+    return  queryMessages.data?.pages.reduce((group, page) => {
+      page.ids.forEach(id => {
+        const date = new Date(page.messages[id].message.createdAt);
+        const dateKey = format(date, "yyyy-MM-dd");
+        if(!group[dateKey]) {
+          group[dateKey] = [];
+        }
+        group[dateKey].unshift(page.messages[id]);
+      })
+      return group;
+    }, {} as Record<string, PaginationMessages["messages"][number][]>);
   }, [queryMessages.data]);
-  console.log("allMessages", allMessages);
+  
+
+  // console.log("allMessages", allMessages);
   return {
-    allMessages,
+    groupedMessages,
     queryMembers,
     queryMessages,
     memberMap,
