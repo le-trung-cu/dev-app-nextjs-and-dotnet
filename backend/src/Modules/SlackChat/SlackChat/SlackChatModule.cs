@@ -1,5 +1,6 @@
-namespace SlackChat;
+using SlackChat.Hubs;
 
+namespace SlackChat;
 public static class SlackChatModule
 {
 public static IServiceCollection AddSlackChatModule(this IServiceCollection services, IConfiguration configuration)
@@ -8,6 +9,7 @@ public static IServiceCollection AddSlackChatModule(this IServiceCollection serv
     // 1. Api Endpoint services
 
     // 2. Application Use Case services
+    services.AddScoped<IChatMessageSender, ChatMessageSender>();
     // 3. Data - Infrastructure services
     // services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
     // services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventsInterceptor>();
@@ -22,6 +24,12 @@ public static IServiceCollection AddSlackChatModule(this IServiceCollection serv
 
   public static IApplicationBuilder UseSlackChatModule(this IApplicationBuilder app)
   {
+    return app;
+  }
+
+  public static IEndpointRouteBuilder UseSlackChatHub(this IEndpointRouteBuilder app)
+  {
+    app.MapHub<ChatHub>("/slack/chat/hubs").RequireCors();
 
     return app;
   }

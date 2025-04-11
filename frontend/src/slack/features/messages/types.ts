@@ -10,13 +10,16 @@ export type Message = {
   memberId: string;
   createdAt: string;
   lastModified: string;
+  channelId: string;
+  workspaceId: string;
+  parentMessageId: string;
 }
 
 export type GetMessagesResponseType = {
   isSuccess: boolean;
   data: Message[];
   count: number;
-  pageIndex: number;
+  cursor: string;
   pageSize: number;
   reactionCounts: {
     messageId: string;

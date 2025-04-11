@@ -13,11 +13,13 @@ import { format } from "date-fns";
 import { MessageMain } from "../types";
 import { differenceInMinutes, isToday, isYesterday } from "date-fns";
 import { TIME_THRESHOLD } from "../constant";
+import { useChannelId } from "../../channels/hooks/use-channel-id";
 
 export const Thread = () => {
   const [editingId, setEditingId] = useState("");
   const { parentMessageId, onClose } = usePanel();
   const workspaceId = useWorkspaceId();
+  const channelId = useChannelId();
   const { data: currentMember, isLoading: isGetingCurrentMember } =
     useGetCurrentMember({ workspaceId });
   const {
@@ -30,7 +32,7 @@ export const Thread = () => {
     allMessages,
     memberMap,
     queryMessages: { fetchNextPage, isFetchingNextPage, hasNextPage },
-  } = useGetMessages({ workspaceId, parentMessageId });
+  } = useGetMessages({ workspaceId, channelId, parentMessageId });
 
   const canLoadMore = !isFetchingNextPage && hasNextPage;
   const loadMore = fetchNextPage;

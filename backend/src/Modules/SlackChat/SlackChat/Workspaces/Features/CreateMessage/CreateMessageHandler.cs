@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Shared.Services;
+using SlackChat.Hubs;
 
 namespace SlackChat.Workspaces.Features.CreateMessage;
 
@@ -15,7 +16,7 @@ public record CreateMessageCommand(
 public record CreateMessageResult(bool IsSuccess, Guid MessageId);
 
 public class CreateMessageHandler
-  (WorkspaceDbContext dbContext, ClaimsPrincipal user, IUploadFileService fileService)
+  (WorkspaceDbContext dbContext, ClaimsPrincipal user, IUploadFileService fileService, IChatMessageSender chatMessageSender)
   : ICommandHandler<CreateMessageCommand, CreateMessageResult>
 {
   public async Task<CreateMessageResult> Handle(CreateMessageCommand command, CancellationToken cancellationToken)
@@ -50,6 +51,8 @@ public class CreateMessageHandler
     var message = workspace.AddMessage(command.ChannelId, command.Body, imageUrl, member.Id, command.ParentMessageId, command.ConversationId);
 
     await dbContext.SaveChangesAsync(cancellationToken);
+
+    await chatMessageSender.NewMessage(message.Adapt<MessageDto>());
 
     return new CreateMessageResult(true, message.Id);
   }

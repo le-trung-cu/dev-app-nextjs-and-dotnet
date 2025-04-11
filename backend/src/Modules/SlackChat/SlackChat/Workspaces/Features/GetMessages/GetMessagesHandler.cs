@@ -2,17 +2,17 @@ using Shared.Pagination;
 
 namespace SlackChat.Workspaces.Features.GetMessages;
 
-public record GetMessagesQuery : PaginationRequest, IQuery<GetMessagesResult>
+public record GetMessagesQuery : PaginationWithCursorRequest<Guid?>, IQuery<GetMessagesResult>
 {
-  public Guid WorkspaceId { get; set; }
-  public Guid? ChannelId { get; set; } = default;
-  public Guid? ConversationId { get; set; } = default;
-  public Guid? ParentMessageId { get; set; } = default;
+  public Guid WorkspaceId { get; init;}
+  public Guid? ChannelId { get; init;} = default;
+  public Guid? ConversationId { get; init; } = default;
+  public Guid? ParentMessageId { get; init; } = default;
 };
 
 public class GetMessagesResult
-  (bool isSuccess, int pageIndex, int pageSize, long count, IEnumerable<MessageDto> data)
-  : PaginatedResult<MessageDto>(pageIndex, pageSize, count, data)
+  (bool isSuccess, Guid? cursor, int pageSize, long count, IEnumerable<MessageDto> data)
+  : PaginatedWithCursorResult<MessageDto, Guid?>( cursor, pageSize, count, data)
 {
   public bool IsSuccess { get; set; } = isSuccess;
   public IEnumerable<ReactionCount> ReactionCounts { get; set; } = [];
@@ -56,15 +56,19 @@ public class GetMessagesHandler
       messagesQuery = messagesQuery.Where(x => x.ConversationId == query.ConversationId);
     }
 
+    if(query.Cursor.HasValue)
+    {
+      messagesQuery = messagesQuery.Where(x => x.Id < query.Cursor);
+    }
+    var count = await messagesQuery.CountAsync(cancellationToken);
+
     messagesQuery = messagesQuery.OrderByDescending(x => x.CreatedAt);
 
-    var count = await messagesQuery.CountAsync(cancellationToken);
     var messages = await messagesQuery
-      .Skip((query.PageIndex - 1) * query.PageSize)
       .Take(query.PageSize)
       .ToListAsync(cancellationToken);
 
-    var result = new GetMessagesResult(true, query.PageIndex, query.PageSize, count, messages.Adapt<IEnumerable<MessageDto>>());
+    var result = new GetMessagesResult(true, count == 0? query.Cursor : messages.Last()?.Id, query.PageSize, count, messages.Adapt<IEnumerable<MessageDto>>());
 
 
     var messageIds = messages.Select(x => x.Id);

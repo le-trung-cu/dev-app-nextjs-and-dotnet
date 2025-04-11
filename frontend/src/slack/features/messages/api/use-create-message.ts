@@ -1,10 +1,9 @@
 import { clients } from "@/lib/clients";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { CreateMessageResponseType } from "../types";
 import { toast } from "sonner";
 
 export const useCreateMessage = () => {
-  const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async ({
       workspaceId,
@@ -40,9 +39,8 @@ export const useCreateMessage = () => {
       }
       throw new Error("has some error");
     },
-    onSuccess: (data, {workspaceId}) => {
+    onSuccess: () => {
       toast.success("send message success");
-      queryClient.invalidateQueries({queryKey: ["messages", workspaceId]});
     },
     onError: (error) => {
       toast.error(error.message);

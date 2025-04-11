@@ -18,10 +18,10 @@ export const useGetMessages = ({
 
   const queryMessages = useInfiniteQuery<GetMessagesResponseType>({
     queryKey: ["messages", workspaceId, channelId, parentMessageId],
-    initialPageParam: 1,
+    initialPageParam: null,
     getNextPageParam: (lastPage, allPages) => {
       console.log(lastPage, allPages);
-      return lastPage.data.length < lastPage.pageSize? undefined : lastPage.pageIndex + 1;
+      return lastPage.data.length < lastPage.pageSize? undefined : lastPage.cursor;
     },
     queryFn: async ({ pageParam = 1 }) => {
       const queryArr = [];
@@ -31,18 +31,23 @@ export const useGetMessages = ({
       if(parentMessageId) {
         queryArr.push(`parentMessageId=${parentMessageId}`)
       }
+      if(pageParam) {
+        queryArr.push(`cursor=${pageParam}`);
+      }
+
       let queryString = queryArr.join("&");
       if (queryString.length > 0) {
         queryString += "&";
       }
       const response = await clients.get<GetMessagesResponseType>(
-        `/api/slack/workspaces/${workspaceId}/messages?${queryString}pageIndex=${pageParam}&pageSize=${10}`,
+        `/api/slack/workspaces/${workspaceId}/messages?${queryString}&pageSize=${10}`,
       );
       if (response.data.isSuccess) {
         return response.data;
       }
       throw new Error("has some error");
     },
+    throwOnError: true,
   });
 
   const queryMembersRef = useRef(queryMembers);
