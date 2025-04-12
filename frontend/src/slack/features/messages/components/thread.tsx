@@ -10,14 +10,15 @@ import { Button } from "@/components/ui/button";
 import { ThreadInput } from "./thread-input";
 import { useGetMessages } from "../api/use-get-messages";
 import { format } from "date-fns";
-import { MessageMain } from "../types";
 import { differenceInMinutes, isToday, isYesterday } from "date-fns";
 import { TIME_THRESHOLD } from "../constant";
+import { useChannelId } from "../../channels/hooks/use-channel-id";
 
 export const Thread = () => {
   const [editingId, setEditingId] = useState("");
   const { parentMessageId, onClose } = usePanel();
   const workspaceId = useWorkspaceId();
+  const channelId = useChannelId();
   const { data: currentMember, isLoading: isGetingCurrentMember } =
     useGetCurrentMember({ workspaceId });
   const {
@@ -27,27 +28,13 @@ export const Thread = () => {
   } = useGetMessageById({ workspaceId, messageId: parentMessageId });
 
   const {
-    allMessages,
+    groupedMessages,
     memberMap,
     queryMessages: { fetchNextPage, isFetchingNextPage, hasNextPage },
-  } = useGetMessages({ workspaceId, parentMessageId });
+  } = useGetMessages({ workspaceId, channelId, parentMessageId });
 
   const canLoadMore = !isFetchingNextPage && hasNextPage;
   const loadMore = fetchNextPage;
-
-  const groupedMessages = allMessages?.reduce(
-    (groups, message) => {
-      const date = new Date(message.createdAt);
-      const dateKey = format(date, "yyyy-MM-dd");
-
-      if (!groups[dateKey]) {
-        groups[dateKey] = [];
-      }
-      groups[dateKey].unshift(message);
-      return groups;
-    },
-    {} as Record<string, MessageMain[]>,
-  );
 
   if (!parentMessageId) return null;
 
@@ -90,29 +77,29 @@ export const Thread = () => {
                     {formatDateLable(dateKey)}
                   </span>
                 </div>
-                {messages.map((message, index) => {
-                  const author = members.get(message.memberId);
+                {messages.map((item, index) => {
+                  const author = members.get(item.message.memberId);
                   const prevMessage = messages[index - 1];
                   const isCompact =
                     prevMessage &&
-                    prevMessage.memberId === message.memberId &&
+                    prevMessage.message.memberId === item.message.memberId &&
                     differenceInMinutes(
-                      new Date(message.createdAt),
-                      new Date(prevMessage.createdAt),
+                      new Date(item.message.createdAt),
+                      new Date(prevMessage.message.createdAt),
                     ) < TIME_THRESHOLD;
                   return (
-                    <div key={message.id}>
+                    <div key={item.message.id}>
                       <Message
-                        id={message.id}
-                        body={message.body}
-                        createdAt={message.createdAt}
+                        id={item.message.id}
+                        body={item.message.body}
+                        createdAt={item.message.createdAt}
                         isCompact={isCompact}
                         authorName={author?.name}
-                        isAuthor={message.memberId === currentMember?.id}
-                        imgUrl={message.imgUrl}
+                        isAuthor={item.message.memberId === currentMember?.id}
+                        imgUrl={item.message.imgUrl}
                         setEditingId={setEditingId}
-                        isEditing={editingId === message.id}
-                        reactions={message.reactions || []}
+                        isEditing={editingId === item.message.id}
+                        reactions={item.reactions || []}
                       />
                     </div>
                   );

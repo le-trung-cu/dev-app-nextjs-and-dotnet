@@ -19,7 +19,7 @@ export default function ClientPage() {
   });
 
   const {
-    allMessages,
+    groupedMessages,
     memberMap,
     queryMessages: { fetchNextPage, isFetchingNextPage, hasNextPage },
   } = useGetMessages({
@@ -55,7 +55,7 @@ export default function ClientPage() {
           <MessageList
             channelName={channel.name}
             channelCreationTime={channel.createdAt}
-            data={allMessages ?? []}
+            data={groupedMessages ?? {}}
             loadMore={fetchNextPage}
             isLoadingMore={isFetchingNextPage}
             canLoadMore={!isFetchingNextPage && hasNextPage}

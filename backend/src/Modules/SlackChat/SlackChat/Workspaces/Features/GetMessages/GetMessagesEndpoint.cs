@@ -3,11 +3,10 @@ using Shared.Pagination;
 
 namespace SlackChat.Workspaces.Features.GetMessages;
 
-public record GetMessagesRequest : PaginationRequest
+public record GetMessagesRequest
+  (Guid? Cursor, int? PageIndex, int PageSize, Guid? ChannelId, Guid? ConversationId, Guid? ParentMessageId)
+  : PaginationWithCursorRequest<Guid?>(Cursor, PageIndex, PageSize)
 {
-  public Guid? ChannelId { get; set; } = default;
-  public Guid? ConversationId { get; set; } = default;
-  public Guid? ParentMessageId { get; set; } = default;
 }
 
 public class GetMessagesEndpoint : ICarterModule
@@ -23,6 +22,7 @@ public class GetMessagesEndpoint : ICarterModule
         ChannelId = request.ChannelId,
         ConversationId = request.ConversationId,
         ParentMessageId = request.ParentMessageId,
+        Cursor = request.Cursor,
         PageIndex = request.PageIndex,
         PageSize = request.PageSize
       };

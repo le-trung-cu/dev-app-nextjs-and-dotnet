@@ -1,3 +1,5 @@
+using SlackChat.Hubs;
+
 namespace SlackChat.Workspaces.Features.UpdateMessage;
 
 public record UpdateMessageCommand(Guid WorkspaceId, Guid MessageId, string Body)
@@ -6,7 +8,8 @@ public record UpdateMessageCommand(Guid WorkspaceId, Guid MessageId, string Body
 public record UpdateMessageResult(bool IsSuccess);
 
 public class UpdateMessageHandler
-  (WorkspaceDbContext dbContext, ClaimsPrincipal user) : ICommandHandler<UpdateMessageCommand, UpdateMessageResult>
+  (WorkspaceDbContext dbContext, ClaimsPrincipal user, IChatMessageSender chatMessageSender)
+  : ICommandHandler<UpdateMessageCommand, UpdateMessageResult>
 {
   public async Task<UpdateMessageResult> Handle(UpdateMessageCommand command, CancellationToken cancellationToken)
   {
@@ -33,6 +36,8 @@ public class UpdateMessageHandler
     workspace.UpdateMessage(command.MessageId, command.Body);
 
     await dbContext.SaveChangesAsync(cancellationToken);
+
+    await chatMessageSender.UpdateMessage(message.Adapt<MessageDto>());
     
     return new UpdateMessageResult(true);
   }

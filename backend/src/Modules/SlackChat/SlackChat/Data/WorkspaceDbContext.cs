@@ -1,3 +1,5 @@
+using System.Reflection;
+
 namespace SlackChat.Data;
 
 public class WorkspaceDbContext(DbContextOptions<WorkspaceDbContext> options) : DbContext(options)
@@ -12,6 +14,6 @@ public class WorkspaceDbContext(DbContextOptions<WorkspaceDbContext> options) : 
   {
     builder.HasDefaultSchema("slack_chat");
     base.OnModelCreating(builder);
-    
+    builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
   }
 }
