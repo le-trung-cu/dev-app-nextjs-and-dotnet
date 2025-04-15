@@ -1,13 +1,11 @@
 "use client";
 
-import { useGetChannel } from "@/slack/features/channels/api/use-get-channel";
-import { ChatInput } from "@/slack/features/channels/components/chat-input";
-import { useChannelId } from "@/slack/features/channels/hooks/use-channel-id";
-import { useGetMessages } from "@/slack/features/messages/api/use-get-messages";
-import { MessageList } from "@/slack/features/messages/components/mesage-list";
-import { useGetWorkspace } from "@/slack/features/workspaces/api/use-get-workspace";
-import { WorkspaceAvatar } from "@/slack/features/workspaces/components/workspace-avatar";
-import { useWorkspaceId } from "@/slack/features/workspaces/hooks/use-workspace-id";
+import { useGetChannel } from "@/app-features/slack/features/channels/api/use-get-channel";
+import { ChatInput } from "@/app-features/slack/features/channels/components/chat-input";
+import { useChannelId } from "@/app-features/slack/features/channels/hooks/use-channel-id";
+import { useGetMessages } from "@/app-features/slack/features/messages/api/use-get-messages";
+import { MessageList } from "@/app-features/slack/features/messages/components/mesage-list";
+import { useWorkspaceId } from "@/app-features/slack/features/workspaces/hooks/use-workspace-id";
 import { Loader, TriangleAlert } from "lucide-react";
 
 export default function ClientPage() {

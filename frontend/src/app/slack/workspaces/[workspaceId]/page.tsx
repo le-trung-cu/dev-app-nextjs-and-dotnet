@@ -1,10 +1,10 @@
 "use client";
 
-import { useGetChannels } from "@/slack/features/channels/api/use-get-channels";
-import { useCreateChannelDialog } from "@/slack/features/channels/hooks/use-create-channel-dialog";
-import { useGetCurrentMember } from "@/slack/features/members/api/use-get-current-member";
-import { useGetWorkspace } from "@/slack/features/workspaces/api/use-get-workspace";
-import { useWorkspaceId } from "@/slack/features/workspaces/hooks/use-workspace-id";
+import { useGetChannels } from "@/app-features/slack/features/channels/api/use-get-channels";
+import { useCreateChannelDialog } from "@/app-features/slack/features/channels/hooks/use-create-channel-dialog";
+import { useGetCurrentMember } from "@/app-features/slack/features/members/api/use-get-current-member";
+import { useGetWorkspace } from "@/app-features/slack/features/workspaces/api/use-get-workspace";
+import { useWorkspaceId } from "@/app-features/slack/features/workspaces/hooks/use-workspace-id";
 import { Loader, TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

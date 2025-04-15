@@ -1,5 +1,5 @@
-import { getCurrent } from "@/features/auth/actions"
-import { JoinWorkspaceForm } from "@/jira/features/members/components/join-workspace-form";
+import { getCurrent } from "@/app-features/auth/actions"
+import { JoinWorkspaceForm } from "@/app-features/jira/features/members/components/join-workspace-form";
 import { redirect } from "next/navigation";
 
 export default async function Page() {

@@ -1,4 +1,4 @@
-import { EditWorkspaceWraper } from "@/jira/features/workspaces/components/edit-workspace-wraper";
+import { EditWorkspaceWraper } from "@/app-features/jira/features/workspaces/components/edit-workspace-wraper";
 
 export default function SettingsPage() {
   return (

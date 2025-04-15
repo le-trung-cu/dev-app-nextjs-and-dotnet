@@ -1,7 +1,7 @@
 "use client";
 
 import { NEXT_PUBLIC_API_HOST_ADDRESS } from "../constant";
-import { SignInResponseType } from "@/features/auth/actions";
+import { SignInResponseType } from "@/app-features/auth/actions";
 import axios from "axios";
 const baseURLApi = NEXT_PUBLIC_API_HOST_ADDRESS;
 

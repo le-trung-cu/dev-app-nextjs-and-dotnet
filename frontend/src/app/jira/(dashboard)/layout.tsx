@@ -1,4 +1,4 @@
-import { AppSidebar } from "@/jira/components/app-sidebar";
+import { AppSidebar } from "@/app-features/jira/components/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -13,7 +13,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Modals } from "@/jira/components/modals";
+import { Modals } from "@/app-features/jira/components/modals";
 
 export default function DashboardLayout({
   children,

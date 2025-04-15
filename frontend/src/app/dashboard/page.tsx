@@ -1,4 +1,4 @@
-import { AppSidebar } from "@/slack/components/app-sidebar"
+import { AppSidebar } from "@/app-features/slack/components/app-sidebar"
 import {
   Breadcrumb,
   BreadcrumbItem,

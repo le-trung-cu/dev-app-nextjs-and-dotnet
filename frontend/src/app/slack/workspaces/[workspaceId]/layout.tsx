@@ -1,9 +1,9 @@
-import { AppSidebar } from "@/slack/components/app-sidebar";
+import { AppSidebar } from "@/app-features/slack/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { ModalsWorkspaceId } from "@/slack/components/modals-workspace-id";
-import { WorkspaceHeaderMain } from "@/slack/features/workspaces/components/workspace-header-main";
+import { ModalsWorkspaceId } from "@/app-features/slack/components/modals-workspace-id";
+import { WorkspaceHeaderMain } from "@/app-features/slack/features/workspaces/components/workspace-header-main";
 import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { ThreadPanel } from "@/slack/features/messages/components/thread-panel";
+import { ThreadPanel } from "@/app-features/slack/features/messages/components/thread-panel";
 
 export default function WorkspaceIdLayout({
   children,

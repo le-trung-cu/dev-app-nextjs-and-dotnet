@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-query";
 // import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import * as React from "react";
-import { AuthenticateType } from "@/features/auth/types";
+import { AuthenticateType } from "@/app-features/auth/types";
 // import { MessageRequiredConfirmEmailDialog } from "@/features/auth/components/message-required-confirm-email-dialog";
 
 function makeQueryClient() {

@@ -1,5 +1,5 @@
-import { getCurrent } from "@/features/auth/actions";
-import { MembersList } from "@/jira/features/members/components/members-list";
+import { getCurrent } from "@/app-features/auth/actions";
+import { MembersList } from "@/app-features/jira/features/members/components/members-list";
 import { redirect } from "next/navigation";
 
 export default async function MembersPage() {

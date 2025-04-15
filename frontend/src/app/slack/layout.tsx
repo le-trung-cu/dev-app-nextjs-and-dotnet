@@ -1,7 +1,7 @@
-import { getCurrent } from "@/features/auth/actions";
-import { JotaiProvioder } from "@/slack/components/jotai-provider";
-import { Modals } from "@/slack/components/modals";
-import { SignalRProvider } from "@/slack/components/signalr-provider";
+import { getCurrent } from "@/app-features/auth/actions";
+import { JotaiProvioder } from "@/app-features/slack/components/jotai-provider";
+import { Modals } from "@/app-features/slack/components/modals";
+import { SignalRProvider } from "@/app-features/slack/components/signalr-provider";
 export default async function SlackLayout({
   children,
 }: {

@@ -1,5 +1,5 @@
-import { getCurrent } from "@/features/auth/actions";
-import { WorkspaceHomeWraper } from "@/jira/features/workspaces/components/workspace-analytics-wraper";
+import { getCurrent } from "@/app-features/auth/actions";
+import { WorkspaceHomeWraper } from "@/app-features/jira/features/workspaces/components/workspace-analytics-wraper";
 import { redirect } from "next/navigation";
 
 export default async function WorkspaceIdPage() {

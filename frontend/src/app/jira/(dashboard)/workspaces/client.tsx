@@ -1,5 +1,5 @@
 "use client";
-import { useGetWorkspaces } from "@/jira/features/workspaces/api/use-get-workspaces";
+import { useGetWorkspaces } from "@/app-features/jira/features/workspaces/api/use-get-workspaces";
 import { Loader } from "lucide-react";
 import { redirect } from "next/navigation";
 

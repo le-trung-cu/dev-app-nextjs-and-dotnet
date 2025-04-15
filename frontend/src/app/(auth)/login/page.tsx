@@ -1,5 +1,5 @@
-import { getCurrent } from "@/features/auth/actions";
-import { LoginForm } from "@/features/auth/components/login-form";
+import { getCurrent } from "@/app-features/auth/actions";
+import { LoginForm } from "@/app-features/auth/components/login-form";
 import { redirect } from "next/navigation";
 
 export default async function LoginPage() {

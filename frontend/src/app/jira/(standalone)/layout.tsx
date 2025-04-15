@@ -1,4 +1,4 @@
-import { LogoJira } from "@/jira/components/logo";
+import { LogoJira } from "@/app-features/jira/components/logo";
 
 export default function StandaloneLayout({
   children,

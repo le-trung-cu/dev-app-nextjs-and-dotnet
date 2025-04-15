@@ -1,6 +1,6 @@
 "use client";
-import { useGetWorkspaces } from "@/slack/features/workspaces/api/use-get-workspaces";
-import { useCreateWorkspaceDialog } from "@/slack/features/workspaces/hooks/use-create-workspace-dialog";
+import { useGetWorkspaces } from "@/app-features/slack/features/workspaces/api/use-get-workspaces";
+import { useCreateWorkspaceDialog } from "@/app-features/slack/features/workspaces/hooks/use-create-workspace-dialog";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
