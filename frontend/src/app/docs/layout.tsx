@@ -5,5 +5,5 @@ export default function DocsLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="docs xxx">{children}</div>;
+  return <div className="docs">{children}</div>;
 }
