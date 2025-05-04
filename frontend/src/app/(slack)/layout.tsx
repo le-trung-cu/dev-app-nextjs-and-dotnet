@@ -30,11 +30,9 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} min-h-screen antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen`}
       >
-        <Providers authenticated={current}>
-          <div className="mx-auto max-w-xl pt-20">{children}</div>
-        </Providers>
+        <Providers authenticated={current}>{children}</Providers>
         <Toaster richColors />
       </body>
     </html>
