@@ -170,4 +170,22 @@
       outline: 3px solid var(--purple);
     }
   }
+
+  /* Highlight Marks */
+  mark {
+    background-color: #FAF594;
+    border-radius: 0.4rem;
+    box-decoration-break: clone;
+    padding: 0.1rem 0.3rem;
+  }
+
+  /* Link styles */
+  a {
+    color: var(--color-blue-500);
+    cursor: pointer;
+
+    &:hover {
+      color: var(--color-blue-400);
+    }
+  }
 }
