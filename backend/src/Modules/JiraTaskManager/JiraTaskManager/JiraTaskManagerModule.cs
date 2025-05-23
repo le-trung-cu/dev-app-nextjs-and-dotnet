@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Data;
 using Shared.Data.Interceptors;
 
 namespace JiraTaskManager;
@@ -29,7 +30,7 @@ public static class JiraTaskManagerModule
 
   public static IApplicationBuilder UseJiraTaskManagerModule(this IApplicationBuilder app)
   {
-
+    app.UseMigration<WorkspaceDbContext>();
     return app;
   }
 }

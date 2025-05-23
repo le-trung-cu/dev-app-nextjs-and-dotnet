@@ -1,0 +1,13 @@
+global using System;
+global using Carter;
+global using Microsoft.AspNetCore.Builder;
+global using Microsoft.AspNetCore.Routing;
+global using EshopMedias.Contracts.Medias.Features.CreateMedia;
+global using EshopMedias.Data;
+global using Shared.Contracts.CQRS;
+global using Shared.Models;
+global using Shared.Services;
+global using MediatR;
+global using Microsoft.AspNetCore.Http;
+global using Mapster;
+global using Shared.Pagination;

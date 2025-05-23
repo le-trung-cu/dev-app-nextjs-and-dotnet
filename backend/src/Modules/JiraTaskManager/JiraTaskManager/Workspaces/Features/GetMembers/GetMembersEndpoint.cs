@@ -9,6 +9,7 @@ public class GetMembersEndpoint : ICarterModule
     async (Guid workspaceId, ISender sender) => {
       var result = await sender.Send(new GetMembersQuery(workspaceId));
       return result;
-    });
+    })
+    .RequireAuthorization();
   }
 }

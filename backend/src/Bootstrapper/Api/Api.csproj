@@ -17,6 +17,11 @@
 
   <ItemGroup>
     <ProjectReference Include="../../Modules/Auth/Auth/Auth.csproj" />
+    <ProjectReference Include="../../Modules/Eshop/Basket/Basket/Basket.csproj" />
+    <ProjectReference Include="../../Modules/Eshop/Catalog/Catalog/Catalog.csproj" />
+    <ProjectReference Include="../../Modules/Eshop/Medias/EshopMedias/EshopMedias.csproj" />
+    <ProjectReference Include="../../Modules/Eshop/Ordering/Ordering/Ordering.csproj" />
+    <ProjectReference Include="../../Modules/Eshop/Tenants/Tenants/Tenants.csproj" />
     <ProjectReference Include="../../Modules/JiraTaskManager/JiraTaskManager/JiraTaskManager.csproj" />
     <ProjectReference Include="../../Modules/SlackChat/SlackChat/SlackChat.csproj" />
   </ItemGroup>

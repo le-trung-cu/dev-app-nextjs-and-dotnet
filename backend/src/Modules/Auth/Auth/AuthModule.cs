@@ -2,6 +2,7 @@ using Auth.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Shared.Data;
 
 namespace Auth;
 
@@ -36,7 +37,8 @@ public static class AuthModule
             ValidateIssuerSigningKey = true,
             ValidIssuer = jwtService.Issuer,
             ValidAudience = jwtService.Audience,
-            IssuerSigningKey = jwtService.IssuerSigningKey
+            IssuerSigningKey = jwtService.IssuerSigningKey,
+            ClockSkew = TimeSpan.Zero // For test, comment this line in product
           };
         });
 
@@ -52,6 +54,7 @@ public static class AuthModule
   {
     app.UseAuthentication();
     app.UseAuthorization();
+    app.UseMigration<AuthDbContext>();
     return app;
   }
 }

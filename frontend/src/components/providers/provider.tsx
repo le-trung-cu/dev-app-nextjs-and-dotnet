@@ -5,6 +5,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import {
   QueryClient,
   QueryClientProvider,
+  defaultShouldDehydrateQuery,
   isServer,
 } from "@tanstack/react-query";
 // import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
@@ -17,6 +18,20 @@ function makeQueryClient() {
     defaultOptions: {
       queries: {
         staleTime: 60 * 1000,
+      },
+      dehydrate: {
+        // include pending queries in dehydration
+        shouldDehydrateQuery: (query) =>
+          defaultShouldDehydrateQuery(query) ||
+          query.state.status === "pending",
+        shouldRedactErrors: (error) => {
+          // We should not catch Next.js server errors
+          // as that's how Next.js detects dynamic pages
+          // so we cannot redact them.
+          // Next.js also automatically redacts errors for us
+          // with better digests.
+          return false;
+        },
       },
     },
   });
@@ -39,9 +54,8 @@ type ProvidersProps = {
   refreshToken?: string;
 };
 export function Providers({ children, authenticated }: ProvidersProps) {
-  clients.defaults.headers.common[
-    "Authorization"
-  ] = `Bearer ${authenticated?.token}`;
+  clients.defaults.headers.common["Authorization"] =
+    `Bearer ${authenticated?.token}`;
 
   const queryClient = getQueryClient();
 

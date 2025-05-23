@@ -13,6 +13,7 @@ public class GetWorkspacesEndpoint : ICarterModule
     {
       var result = await sender.Send(new GetWorkspacesQuery());
       return result;
-    });
+    })
+    .RequireAuthorization();
   }
 }

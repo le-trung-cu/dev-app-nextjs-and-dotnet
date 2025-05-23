@@ -23,6 +23,31 @@ namespace Auth.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Auth.Auth.Models.AppUserToken", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("DeviceName")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ExpiredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("text");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", "auth");
+                });
+
             modelBuilder.Entity("Auth.Auth.Models.User", b =>
                 {
                     b.Property<string>("Id")
@@ -98,16 +123,16 @@ namespace Auth.Data.Migrations
                         {
                             Id = "1a2b3c4d-1234-5678-9101-abcdefabcdef",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b056dfa5-3dcb-4d84-95f8-88f1c3086ffd",
+                            ConcurrencyStamp = "908461f6-c0cd-42a5-961e-b9110a8e1e05",
                             Email = "admin@gmail.com",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             Name = "admin",
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAIAAYagAAAAEN64m+I8tagjsjgO6N1ENzK2tBDPVWNcTKDxDPjadPSqlUHnMtQhMJhaGgF3N6zgTA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEMndCTYRrSZG/HKT0Jrx/2ZdC34rLPVWirPVM9GMJ0cXFNZJA5p2aS86nAEMVdagzA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7871a1ad-6389-4d83-a3d2-7a3f740ff265",
+                            SecurityStamp = "61fbdd72-e7e9-4f03-bb88-67a38ce1aa32",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -247,23 +272,13 @@ namespace Auth.Data.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+            modelBuilder.Entity("Auth.Auth.Models.AppUserToken", b =>
                 {
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LoginProvider")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Value")
-                        .HasColumnType("text");
-
-                    b.HasKey("UserId", "LoginProvider", "Name");
-
-                    b.ToTable("AspNetUserTokens", "auth");
+                    b.HasOne("Auth.Auth.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -301,15 +316,6 @@ namespace Auth.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Auth.Auth.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
-                {
                     b.HasOne("Auth.Auth.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")

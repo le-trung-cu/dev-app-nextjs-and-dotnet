@@ -9,7 +9,7 @@ public class RoleConfiguration : IEntityTypeConfiguration<IdentityRole>
       {
         Id = "manager",
         Name = "Manager",
-        NormalizedName = "MANAGER"
+        NormalizedName = "MANAGER",
       },
       new IdentityRole
       {
