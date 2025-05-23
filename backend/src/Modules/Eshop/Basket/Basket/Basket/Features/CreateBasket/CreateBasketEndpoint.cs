@@ -9,7 +9,7 @@ public class CreateBasketEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPost("/eshop/basket", 
+        app.MapPost("/api/eshop/basket", 
             async (CreateBasketRequest request, ISender sender, ClaimsPrincipal user) =>
         {
             var userName = user.Identity!.Name;
@@ -21,7 +21,7 @@ public class CreateBasketEndpoint : ICarterModule
 
             var response = result.Adapt<CreateBasketResponse>();
 
-            return Results.Created($"/eshop/basket/{response.Id}", response);
+            return Results.Created($"/api/eshop/basket/{response.Id}", response);
         })
         .Produces<CreateBasketResponse>(StatusCodes.Status201Created)
         .ProducesProblem(StatusCodes.Status400BadRequest)

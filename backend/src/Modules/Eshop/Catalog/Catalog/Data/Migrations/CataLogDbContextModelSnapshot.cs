@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Catalog.Data.Migrations
 {
     [DbContext(typeof(CatalogDbContext))]
-    partial class CataLogDbContextModelSnapshot : ModelSnapshot
+    partial class CatalogDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -23,7 +23,7 @@ namespace Catalog.Data.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Catalog.Categories.Models.Category", b =>
+            modelBuilder.Entity("Catalog.Products.Models.Category", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -68,6 +68,9 @@ namespace Catalog.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("CoverId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -77,6 +80,15 @@ namespace Catalog.Data.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Guid?>("ImageId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsArchived")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsPrivate")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("LasetModifiedBy")
                         .HasColumnType("text");
@@ -88,7 +100,17 @@ namespace Catalog.Data.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<Guid>("TenantId")
+                        .HasColumnType("uuid");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CoverId");
+
+                    b.HasIndex("ImageId");
 
                     b.ToTable("Products", "eshop.catalog");
                 });
@@ -108,18 +130,73 @@ namespace Catalog.Data.Migrations
                     b.ToTable("CategoryProduct", "eshop.catalog");
                 });
 
-            modelBuilder.Entity("Catalog.Categories.Models.Category", b =>
+            modelBuilder.Entity("Shared.Models.Media", b =>
                 {
-                    b.HasOne("Catalog.Categories.Models.Category", "ParentCategory")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Alt")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("text");
+
+                    b.Property<string>("LasetModifiedBy")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastModified")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("TenantId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Medias", "eshop.medias");
+                });
+
+            modelBuilder.Entity("Catalog.Products.Models.Category", b =>
+                {
+                    b.HasOne("Catalog.Products.Models.Category", "ParentCategory")
                         .WithMany("Subcategories")
                         .HasForeignKey("ParentCategoryId");
 
                     b.Navigation("ParentCategory");
                 });
 
+            modelBuilder.Entity("Catalog.Products.Models.Product", b =>
+                {
+                    b.HasOne("Shared.Models.Media", "Cover")
+                        .WithMany()
+                        .HasForeignKey("CoverId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("Shared.Models.Media", "Image")
+                        .WithMany()
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Cover");
+
+                    b.Navigation("Image");
+                });
+
             modelBuilder.Entity("CategoryProduct", b =>
                 {
-                    b.HasOne("Catalog.Categories.Models.Category", null)
+                    b.HasOne("Catalog.Products.Models.Category", null)
                         .WithMany()
                         .HasForeignKey("CategoriesId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -132,7 +209,7 @@ namespace Catalog.Data.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Catalog.Categories.Models.Category", b =>
+            modelBuilder.Entity("Catalog.Products.Models.Category", b =>
                 {
                     b.Navigation("Subcategories");
                 });

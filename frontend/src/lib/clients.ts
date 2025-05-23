@@ -1,13 +1,17 @@
-"use client";
+// "use client";
 
 import { NEXT_PUBLIC_API_HOST_ADDRESS } from "../constant";
 import { SignInResponseType } from "@/app-features/auth/actions";
 import axios from "axios";
+import { sleep } from "./utils";
 const baseURLApi = NEXT_PUBLIC_API_HOST_ADDRESS;
 
 // refresh token from route /api/refresh-token
 // use for browser
-function createBrowserClients() {
+export function createBrowserClients() {
+  // if(typeof window === "undefined") {
+  //   return axios;
+  // }
   // Create an Axios instance
   const clients = axios.create({
     baseURL: baseURLApi, // Replace with your API base URL
@@ -22,18 +26,10 @@ function createBrowserClients() {
     refreshSubscribers.push(cb);
   };
 
-  const onRrefreshed = (token: string) => {
+  const onRefreshed = (token: string) => {
     refreshSubscribers.map((cb) => cb(token));
     refreshSubscribers = [];
   };
-
-  // Request Interceptor
-  clients.interceptors.request.use(
-    (config) => {
-      return config;
-    },
-    (error) => Promise.reject(error)
-  );
 
   // Response Interceptor
   clients.interceptors.response.use(
@@ -42,18 +38,25 @@ function createBrowserClients() {
       const originalRequest = error.config;
 
       if (error.response?.status === 401 && !originalRequest._retry) {
+        // Wait for token refresh to complete
+        const retryOriginalRequest = new Promise((resolve) => {
+          subscribeTokenRefresh((token) => {
+            originalRequest._retry = true;
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            resolve(clients(originalRequest));
+          });
+        });
+
         if (!isRefreshing) {
           isRefreshing = true;
 
           try {
-            console.info("browser-client call refresh token");
-            const data = await axios.post<SignInResponseType>("/api/refresh-token");
-
+            const data =
+              await axios.post<SignInResponseType>("/api/refresh-token");
             const newAccessToken = data.data.accessToken;
-
             clients.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
             isRefreshing = false;
-            onRrefreshed(newAccessToken);
+            onRefreshed(newAccessToken);
           } catch (refreshError) {
             isRefreshing = false;
             refreshSubscribers = [];
@@ -61,18 +64,11 @@ function createBrowserClients() {
           }
         }
 
-        // Wait for token refresh to complete
-        return new Promise((resolve) => {
-          subscribeTokenRefresh((token) => {
-            originalRequest._retry = true;
-            originalRequest.headers.Authorization = `Bearer ${token}`;
-            resolve(clients(originalRequest));
-          });
-        });
+        return retryOriginalRequest;
       }
 
       return Promise.reject(error);
-    }
+    },
   );
   return clients;
 }

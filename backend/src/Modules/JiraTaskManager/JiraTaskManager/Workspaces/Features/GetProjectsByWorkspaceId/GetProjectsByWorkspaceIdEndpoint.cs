@@ -11,6 +11,7 @@ public class GetProjectsByWorkspaceIdEndpoint: ICarterModule
     {
       var result = await sender.Send(new GetProjectsByWorkspaceIdQuery(workspaceId));
       return result;
-    });
+    })
+    .RequireAuthorization();
   }
 }

@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Shared\Shared.Contracts\Shared.Contracts.csproj" />
+    <ProjectReference Include="../../../../Shared/Shared.Contracts/Shared.Contracts.csproj" />
+    <ProjectReference Include="../../../../Shared/Shared/Shared.csproj" />
+    <ProjectReference Include="../../Tenants/Tenants.Contracts/Tenants.Contracts.csproj" />
   </ItemGroup>
 
 </Project>

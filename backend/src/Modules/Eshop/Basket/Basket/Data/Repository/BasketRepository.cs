@@ -3,11 +3,11 @@ namespace Basket.Data.Repository;
 public class BasketRepository(BasketDbContext dbContext)
     : IBasketRepository
 {
-    public async Task<ShoppingCart> GetBasket(string userName, bool asNoTracking = true, CancellationToken cancellationToken = default)
+    public async Task<ShoppingCart> GetBasket(Guid tenantId,string userName, bool asNoTracking = true, CancellationToken cancellationToken = default)
     {
         var query = dbContext.ShoppingCarts
             .Include(x => x.Items)
-            .Where(x => x.UserName == userName);
+            .Where(x => x.TenantId == tenantId && x.UserName == userName);
 
         if (asNoTracking)
         {
@@ -26,9 +26,9 @@ public class BasketRepository(BasketDbContext dbContext)
         return basket;
     }
 
-    public async Task<bool> DeleteBasket(string userName, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteBasket(Guid tenantId, string userName, CancellationToken cancellationToken = default)
     {
-        var basket = await GetBasket(userName, false, cancellationToken);
+        var basket = await GetBasket(tenantId, userName, false, cancellationToken);
 
         dbContext.ShoppingCarts.Remove(basket);
         await dbContext.SaveChangesAsync(cancellationToken);
@@ -36,7 +36,7 @@ public class BasketRepository(BasketDbContext dbContext)
         return true;
     }    
 
-    public async Task<int> SaveChangesAsync(string? userName = null, CancellationToken cancellationToken = default)
+    public async Task<int> SaveChangesAsync(Guid tenantId, string? userName = null, CancellationToken cancellationToken = default)
     {
         return await dbContext.SaveChangesAsync(cancellationToken);
     }

@@ -5,20 +5,20 @@ public record DeleteBasketResponse(bool IsSuccess);
 
 public class DeleteBasketEndpoint : ICarterModule
 {
-    public void AddRoutes(IEndpointRouteBuilder app)
+  public void AddRoutes(IEndpointRouteBuilder app)
+  {
+    app.MapDelete("/api/eshop/tenants/{tenantId}/basket/{userName}", async (Guid tenantId, string userName, ISender sender) =>
     {
-        app.MapDelete("/eshop/basket/{userName}", async (string userName, ISender sender) =>
-        {
-            var result = await sender.Send(new DeleteBasketCommand(userName));
+      var result = await sender.Send(new DeleteBasketCommand(tenantId, userName));
 
-            var response = result.Adapt<DeleteBasketResponse>();
+      var response = result.Adapt<DeleteBasketResponse>();
 
-            return Results.Ok(response);
-        })
-        .Produces<DeleteBasketResponse>(StatusCodes.Status200OK)
-        .ProducesProblem(StatusCodes.Status400BadRequest)
-        .WithSummary("Delete Basket")
-        .WithDescription("Delete Basket")
-        .RequireAuthorization();
-    }
+      return Results.Ok(response);
+    })
+    .Produces<DeleteBasketResponse>(StatusCodes.Status200OK)
+    .ProducesProblem(StatusCodes.Status400BadRequest)
+    .WithSummary("Delete Basket")
+    .WithDescription("Delete Basket")
+    .RequireAuthorization();
+  }
 }

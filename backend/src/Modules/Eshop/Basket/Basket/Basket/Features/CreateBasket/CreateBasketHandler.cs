@@ -32,6 +32,7 @@ internal class CreateBasketHandler(IBasketRepository repository)
         // create new basket
         var newBasket = ShoppingCart.Create(
             Guid.NewGuid(),
+            shoppingCartDto.TenantId,
             shoppingCartDto.UserName);
 
         shoppingCartDto.Items.ForEach(item =>

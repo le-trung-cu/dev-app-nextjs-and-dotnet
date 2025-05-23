@@ -9,6 +9,6 @@ public class GetWorkspaceByIdEndpoint : ICarterModule
     {
       var result = await sender.Send(new GetWorkspaceByIdQuery(workspaceId));
       return result;
-    });
+    }).RequireAuthorization();
   }
 }

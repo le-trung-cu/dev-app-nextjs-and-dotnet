@@ -9,4 +9,9 @@ public static class ClaimsPrincipalExtentions
   {
     return principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.NameIdentifier)?.Value!;
   }
+
+  public static bool IsSuperAdmin(this ClaimsPrincipal principal)
+  {
+    return principal.IsInRole("Administrator");
+  }
 }

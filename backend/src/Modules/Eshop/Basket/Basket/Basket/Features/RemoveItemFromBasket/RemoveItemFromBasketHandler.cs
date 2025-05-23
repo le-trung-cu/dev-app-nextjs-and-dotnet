@@ -1,6 +1,6 @@
 ﻿namespace Basket.Basket.Features.RemoveItemFromBasket;
 
-public record RemoveItemFromBasketCommand(string UserName, Guid ProductId)
+public record RemoveItemFromBasketCommand(Guid TenantId, string UserName, Guid ProductId)
     : ICommand<RemoveItemFromBasketResult>;
 public record RemoveItemFromBasketResult(Guid Id);
 public class RemoveItemFromBasketCommandValidator : AbstractValidator<RemoveItemFromBasketCommand>
@@ -17,11 +17,11 @@ internal class RemoveItemFromBasketHandler(IBasketRepository repository)
 {
     public async Task<RemoveItemFromBasketResult> Handle(RemoveItemFromBasketCommand command, CancellationToken cancellationToken)
     {
-        var shoppingCart = await repository.GetBasket(command.UserName, false, cancellationToken);
+        var shoppingCart = await repository.GetBasket(command.TenantId, command.UserName, false, cancellationToken);
 
         shoppingCart.RemoveItem(command.ProductId);
 
-        await repository.SaveChangesAsync(command.UserName, cancellationToken);
+        await repository.SaveChangesAsync(command.TenantId, command.UserName, cancellationToken);
 
         return new RemoveItemFromBasketResult(shoppingCart.Id);
     }

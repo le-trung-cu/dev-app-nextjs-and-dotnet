@@ -28,6 +28,8 @@ type User = {
 export type AuthenticateType = {
   isSuccess: boolean;
   token: string;
+  refreshToken: string;
+  expires: string;
   user: User;
 };
 

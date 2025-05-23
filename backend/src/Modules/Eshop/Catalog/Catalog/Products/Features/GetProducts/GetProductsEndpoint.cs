@@ -2,23 +2,24 @@
 
 namespace Catalog.Products.Features.GetProducts;
 
-//public record GetProductsRequest(PaginationRequest PaginationRequest);
-public record GetProductsResponse(PaginatedResult<ProductDto> Products);
+public record GetProductsRequest
+    (string? TenantId, string? CategoryId, int PageIndex = 0, int PageSize = 10)
+    : PaginationRequest(PageIndex, PageSize);
+
+// public record GetProductsResponse(PaginatedResult<ProductDto> Products);
 
 public class GetProductsEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/products", async ([AsParameters] PaginationRequest request, ISender sender) =>
+        app.MapGet("/api/eshop/products", async ([AsParameters] GetProductsRequest request, ISender sender) =>
         {
-            var result = await sender.Send(new GetProductsQuery(request));
+            var result = await sender.Send(new GetProductsQuery(request.TenantId, request.CategoryId, new PaginationRequest(request.PageIndex, request.PageSize)));
 
-            var response = result.Adapt<GetProductsResponse>();
 
-            return Results.Ok(response);
+            return Results.Ok(result);
         })
         .WithName("GetProducts")
-        .Produces<GetProductsResponse>(StatusCodes.Status200OK)
         .ProducesProblem(StatusCodes.Status400BadRequest)
         .WithSummary("Get Products")
         .WithDescription("Get Products");

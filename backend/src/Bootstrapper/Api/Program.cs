@@ -6,6 +6,12 @@ using Shared.Exceptions.Handler;
 using Shared.Extensions;
 using Shared.Services;
 using Catalog;
+using Tenants;
+using Catalog.Products.Models;
+using Shared.Messaging.Extensions;
+using Basket;
+using Ordering;
+using EshopMedias;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,26 +30,58 @@ builder.Services.AddSwaggerGen(options =>
 });
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
-builder.Services.AddScoped<IUploadFileService, UploadFileSevice>();
+builder.Services.AddScoped<IUploadFileService, UploadFileService>();
 
 var authAssembly = typeof(AuthModule).Assembly;
 var jiraAssembly = typeof(JiraTaskManagerModule).Assembly;
 var slackAssembly = typeof(SlackChatModule).Assembly;
+/*Eshop*/
+var mediaAssembly = typeof(EshopMediaModule).Assembly;
+var tenantAssembly = typeof(EshopTenantModule).Assembly;
+var catalogAssembly = typeof(CatalogModule).Assembly;
+var basketAssembly = typeof(BasketModule).Assembly;
+var orderingAssembly = typeof(OrderingModule).Assembly;
 
 builder.Services
     .AddAuthModule(builder.Configuration)
     .AddJiraTaskManagerModule(builder.Configuration)
     .AddSlackChatModule(builder.Configuration)
-    .AddEshopCatalogModule(builder.Configuration);
+    /*Eshop*/
+    .AddEshopMediaModule(builder.Configuration)
+    .AddEshopTenantModule(builder.Configuration)
+    .AddEshopCatalogModule(builder.Configuration)
+    .AddBasketModule(builder.Configuration)
+    .AddOrderingModule(builder.Configuration);
 
 builder.Services.AddMediatRWithAssemblies(
     authAssembly,
     jiraAssembly,
-    slackAssembly);
+    slackAssembly,
+    /*Eshop*/
+    mediaAssembly,
+    tenantAssembly,
+    catalogAssembly,
+    basketAssembly,
+    orderingAssembly);
 builder.Services.AddCarterAssemblies(
     authAssembly,
     jiraAssembly,
-    slackAssembly);
+    slackAssembly,
+    /*Eshop*/
+    mediaAssembly,
+    tenantAssembly,
+    catalogAssembly,
+    basketAssembly
+    // orderingAssembly
+    );
+
+builder.Services.AddMassTransitWithAssemblies(
+    builder.Configuration,
+    tenantAssembly,
+    catalogAssembly,
+    basketAssembly
+    // orderingAssembly
+    );
 
 builder.Services.AddCors(options =>
 {
@@ -71,7 +109,10 @@ app.UseStaticFiles();
 app.UseAuthModule()
     .UseJiraTaskManagerModule()
     .UseSlackChatModule()
-    .UseEshopCatalogModule();
+    .UseEshopMediaModule()
+    .UseEshopTenantModule()
+    .UseEshopCatalogModule()
+    .UseBasketModule();
 
 app.UseSlackChatHub();
 

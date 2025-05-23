@@ -1,50 +1,66 @@
-﻿namespace Catalog.Products.Features.UpdateProduct;
+﻿using EshopMedias.Contracts.Medias.Features.CreateMedia;
 
-public record UpdateProductCommand(ProductDto Product)
-    : ICommand<UpdateProductResult>;
+namespace Catalog.Products.Features.UpdateProduct;
+
+public record UpdateProductCommand(
+  Guid Id,
+  Guid TenantId,
+  string Name,
+  List<Guid> Categories,
+  string Description,
+  decimal Price,
+  Guid? ImageId,
+  Guid? CoverId)
+  : ICommand<UpdateProductResult>;
+
 public record UpdateProductResult(bool IsSuccess);
 public class UpdateProductCommandValidator : AbstractValidator<UpdateProductCommand>
 {
-    public UpdateProductCommandValidator()
-    {
-        RuleFor(x => x.Product.Id).NotEmpty().WithMessage("Id is required");
-        RuleFor(x => x.Product.Name).NotEmpty().WithMessage("Name is required");
-        RuleFor(x => x.Product.Price).GreaterThan(0).WithMessage("Price must be greater than 0");
-    }
+  public UpdateProductCommandValidator()
+  {
+    RuleFor(x => x.Id).NotEmpty().WithMessage("Id is required");
+    RuleFor(x => x.Name).NotEmpty().WithMessage("Name is required");
+    RuleFor(x => x.Price).GreaterThan(0).WithMessage("Price must be greater than 0");
+  }
 }
 
-internal class UpdateProductHandler(CatalogDbContext dbContext)
+internal class UpdateProductHandler(CatalogDbContext dbContext, ISender sender)
     : ICommandHandler<UpdateProductCommand, UpdateProductResult>
 {
-    public async Task<UpdateProductResult> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
+  public async Task<UpdateProductResult> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
+  {
+    //Update Product entity from command object
+    //save to database
+    //return result
+
+    var product = await dbContext.Products
+      .Where(x => x.Id == command.Id)
+      .Include(x => x.Categories)
+      .FirstOrDefaultAsync(cancellationToken);
+      
+    var categories = await dbContext.Categories
+      .Where(x => command.Categories.Contains(x.Id))
+      .ToListAsync(cancellationToken);
+    if (product is null)
     {
-        //Update Product entity from command object
-        //save to database
-        //return result
-
-        var product = await dbContext.Products
-          .FindAsync([command.Product.Id], cancellationToken: cancellationToken);
-
-        if (product is null)
-        {
-            throw new ProductNotFoundException(command.Product.Id);
-        }
-
-        UpdateProductWithNewValues(product, command.Product);
-
-        dbContext.Products.Update(product);
-        await dbContext.SaveChangesAsync(cancellationToken);
-
-        return new UpdateProductResult(true);
+      throw new ProductNotFoundException(command.Id);
     }
 
-    private void UpdateProductWithNewValues(Product product, ProductDto productDto)
-    {
-        product.Update(
-            productDto.Name,
-            productDto.Category,
-            productDto.Description,
-            productDto.ImageFile,
-            productDto.Price);
-    }
+
+    Guid? imageId = command.ImageId;
+    Guid? coverId = command.CoverId;
+
+    product.Update(
+        command.Name,
+        categories,
+        command.Description,
+        command.Price,
+        imageId,
+        coverId);
+
+    dbContext.Products.Update(product);
+    await dbContext.SaveChangesAsync(cancellationToken);
+
+    return new UpdateProductResult(true);
+  }
 }

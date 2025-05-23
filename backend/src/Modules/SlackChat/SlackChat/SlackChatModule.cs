@@ -1,9 +1,10 @@
+using Shared.Data;
 using SlackChat.Hubs;
 
 namespace SlackChat;
 public static class SlackChatModule
 {
-public static IServiceCollection AddSlackChatModule(this IServiceCollection services, IConfiguration configuration)
+  public static IServiceCollection AddSlackChatModule(this IServiceCollection services, IConfiguration configuration)
   {
     // Add services to the container.
     // 1. Api Endpoint services
@@ -24,6 +25,7 @@ public static IServiceCollection AddSlackChatModule(this IServiceCollection serv
 
   public static IApplicationBuilder UseSlackChatModule(this IApplicationBuilder app)
   {
+    app.UseMigration<WorkspaceDbContext>();
     return app;
   }
 

@@ -10,10 +10,11 @@ public class ShoppingCartConverter : JsonConverter<ShoppingCart>
     var rootElement = jsonDocument.RootElement;
 
     var id = rootElement.GetProperty("id").GetGuid();
+    var tenantId = rootElement.GetProperty("tenantId").GetGuid()!;
     var userName = rootElement.GetProperty("userName").GetString()!;
     var itemsElement = rootElement.GetProperty("items");
 
-    var shoppingCart = ShoppingCart.Create(id, userName);
+    var shoppingCart = ShoppingCart.Create(tenantId, id, userName);
 
     var items = itemsElement.Deserialize<List<ShoppingCartItem>>(options);
     if (items != null)

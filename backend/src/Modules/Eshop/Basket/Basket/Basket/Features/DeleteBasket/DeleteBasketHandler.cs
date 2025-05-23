@@ -1,6 +1,6 @@
 ﻿namespace Basket.Basket.Features.DeleteBasket;
 
-public record DeleteBasketCommand(string UserName)
+public record DeleteBasketCommand(Guid TenantId, string UserName)
     : ICommand<DeleteBasketResult>;
 public record DeleteBasketResult(bool IsSuccess);
 
@@ -13,7 +13,7 @@ internal class DeleteBasketHandler(IBasketRepository repository)
         //save to database
         //return result
       
-        await repository.DeleteBasket(command.UserName, cancellationToken);
+        await repository.DeleteBasket(command.TenantId, command.UserName, cancellationToken);
 
         return new DeleteBasketResult(true);
     }

@@ -19,7 +19,7 @@ public static class BasketModule
 
         // 2. Application Use Case services
         services.AddScoped<IBasketRepository, BasketRepository>();
-        services.Decorate<IBasketRepository, CachedBasketRepository>();        
+        // services.Decorate<IBasketRepository, CachedBasketRepository>();        
 
         // 3. Data - Infrastructure services
         var connectionString = configuration.GetConnectionString("Database");
@@ -32,8 +32,8 @@ public static class BasketModule
             options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
             options.UseNpgsql(connectionString);
         });
-
-        services.AddHostedService<OutboxProcessor>();
+        //TODO: uncomment for out box processor
+        // services.AddHostedService<OutboxProcessor>();
 
         return services;
     }

@@ -7,9 +7,9 @@ public class GetBasketEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/eshop/basket/{userName}", async (string userName, ISender sender) =>
+        app.MapGet("/api/eshop/tenants/{tenantId}/basket/{userName}", async (string tenantId, string userName, ISender sender) =>
         {
-            var result = await sender.Send(new GetBasketQuery(userName));
+            var result = await sender.Send(new GetBasketQuery(tenantId, userName));
 
             var response = result.Adapt<GetBasketResponse>();
 

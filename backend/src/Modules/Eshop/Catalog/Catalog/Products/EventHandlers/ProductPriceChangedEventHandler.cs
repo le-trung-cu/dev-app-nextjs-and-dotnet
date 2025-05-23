@@ -17,7 +17,7 @@ public class ProductPriceChangedEventHandler
             Name = notification.Product.Name,
             CategoryIds = [.. notification.Product.Categories.Select(x => x.Id)],
             Description = notification.Product.Description,
-            ImageFile = notification.Product.ImageFile,
+            ImageFile = "",
             Price = notification.Product.Price //set updated product price
         };
 

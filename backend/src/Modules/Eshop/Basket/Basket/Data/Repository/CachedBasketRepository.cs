@@ -15,20 +15,20 @@ public class CachedBasketRepository
         Converters = { new ShoppingCartConverter(), new ShoppingCartItemConverter() }
     };
 
-    public async Task<ShoppingCart> GetBasket(string userName, bool asNoTracking = true, CancellationToken cancellationToken = default)
+    public async Task<ShoppingCart> GetBasket(Guid tenantId,string userName, bool asNoTracking = true, CancellationToken cancellationToken = default)
     {
         if (!asNoTracking)
         {
-            return await repository.GetBasket(userName, false, cancellationToken);
+            return await repository.GetBasket(tenantId, userName, false, cancellationToken);
         }
 
-        var cachedBasket = await cache.GetStringAsync(userName, cancellationToken);
+        var cachedBasket = await cache.GetStringAsync(tenantId.ToString() + userName, cancellationToken);
         if (!string.IsNullOrEmpty(cachedBasket))
         {            
             return JsonSerializer.Deserialize<ShoppingCart>(cachedBasket, _options)!;
         }            
 
-        var basket = await repository.GetBasket(userName, asNoTracking, cancellationToken);
+        var basket = await repository.GetBasket(tenantId, userName, asNoTracking, cancellationToken);
         
         await cache.SetStringAsync(userName, JsonSerializer.Serialize(basket, _options), cancellationToken);
         
@@ -44,18 +44,18 @@ public class CachedBasketRepository
         return basket;
     }
 
-    public async Task<bool> DeleteBasket(string userName, CancellationToken cancellationToken = default)
+    public async Task<bool> DeleteBasket(Guid tenantId, string userName, CancellationToken cancellationToken = default)
     {
-        await repository.DeleteBasket(userName, cancellationToken);
+        await repository.DeleteBasket(tenantId, userName, cancellationToken);
 
         await cache.RemoveAsync(userName, cancellationToken);
 
         return true;
     }    
 
-    public async Task<int> SaveChangesAsync(string? userName = null, CancellationToken cancellationToken = default)
+    public async Task<int> SaveChangesAsync(Guid tenantId,string? userName = null, CancellationToken cancellationToken = default)
     {
-        var result = await repository.SaveChangesAsync(userName, cancellationToken);
+        var result = await repository.SaveChangesAsync(tenantId, userName, cancellationToken);
         
         if (userName is not null)
         {

@@ -12,5 +12,5 @@ public record WorkspaceItemDto(
   Guid Id,
   string Name,
   string ImgUrl,
-   string InviteToken
+  string InviteToken
 );

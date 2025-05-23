@@ -1,13 +1,21 @@
 ﻿namespace Catalog.Products.Features.UpdateProduct;
 
-public record UpdateProductRequest(ProductDto Product);
+public record UpdateProductRequest(Guid Id,
+    Guid TenantId,
+    string Name,
+    List<Guid> Categories,
+    string Description,
+    decimal Price,
+    Guid? ImageId,
+    Guid? CoverId);
+
 public record UpdateProductResponse(bool IsSuccess);
 
 public class UpdateProductEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapPut("/products", async (UpdateProductRequest request, ISender sender) =>
+        app.MapPut("/api/eshop/products", async (UpdateProductRequest request, ISender sender) =>
         {
             var command = request.Adapt<UpdateProductCommand>();
 

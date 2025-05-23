@@ -1,19 +1,21 @@
 ﻿namespace Basket.Basket.Models;
 public class ShoppingCart : Aggregate<Guid>
 {
+    public Guid TenantId {get; private set;}
     public string UserName { get; private set; } = default!;
 
     private readonly List<ShoppingCartItem> _items = new();
     public IReadOnlyList<ShoppingCartItem> Items => _items.AsReadOnly();
     public decimal TotalPrice => Items.Sum(x => x.Price * x.Quantity);
 
-    public static ShoppingCart Create(Guid id, string userName)
+    public static ShoppingCart Create(Guid id, Guid tenantId, string userName)
     {
         ArgumentException.ThrowIfNullOrEmpty(userName);
 
         var shoppingCart = new ShoppingCart
         {
             Id = id,
+            TenantId = tenantId,
             UserName = userName
         };
 

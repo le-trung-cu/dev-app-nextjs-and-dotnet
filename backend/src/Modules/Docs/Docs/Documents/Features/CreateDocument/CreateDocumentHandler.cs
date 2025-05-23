@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Docs.Data;
 using Docs.Documents.Models;
-using Shared.CQRS;
+using Shared.Contracts.CQRS;
 using Shared.Extensions;
 
 namespace Docs.Documents.Features.CreateDocument;

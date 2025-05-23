@@ -1,13 +1,16 @@
-﻿namespace Catalog.Products.Features.GetProductById;
+﻿using Catalog.Contracts.Products.Features.GetProductById;
+using Tenants.Contracts.Tenants.Dtos;
+
+namespace Catalog.Products.Features.GetProductById;
 
 //public record GetProductByIdRequest(Guid Id);
-public record GetProductByIdResponse(ProductDto Product);
+public record GetProductByIdResponse(ProductDto Product, TenantDto Tenant);
 
 public class GetProductByIdEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/products/{id}", async (Guid id, ISender sender) =>
+        app.MapGet("/api/eshop/products/{id}", async (string id, ISender sender) =>
         {
             var result = await sender.Send(new GetProductByIdQuery(id));
 

@@ -1,8 +1,8 @@
 namespace Auth.Auth.Features.Register;
 
-public record RegisterRequest(string? Name, string? Email, string? Password);
+public record RegisterRequest(string? Name, string? Email, string? Password, string? DeviceId);
 
-public record RegisterResponse(bool IsSuccess, string? Token, UserDto? User);
+public record RegisterResponse(bool IsSuccess, string? Token, string? RefreshToken,  DateTime? Expires, UserDto? User);
 
 public class RegisterEndpoint : ICarterModule
 {
