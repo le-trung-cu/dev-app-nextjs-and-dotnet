@@ -66,7 +66,7 @@ export const Thread = () => {
         </Button>
       </div>
       <div className="relative flex-1">
-        <div className="messages-scrollbar absolute inset-0 overflow-y-auto pt-5 flex flex-col-reverse">
+        <div className="messages-scrollbar absolute inset-0 overflow-x-clip overflow-y-auto pt-5 flex flex-col-reverse">
           
           {Object.entries(groupedMessages || {}).map(([dateKey, messages]) => {
             return (

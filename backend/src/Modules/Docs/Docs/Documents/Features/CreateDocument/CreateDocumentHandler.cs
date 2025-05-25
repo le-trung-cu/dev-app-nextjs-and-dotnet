@@ -20,6 +20,7 @@ public class CreateDocumentHandler
   {
     var userId = user.GetUserId();
     var document = Document.Create(command.Title, userId, command.InitialContent);
+    dbContext.Documents.Add(document);
     await dbContext.SaveChangesAsync(cancellationToken);
     return new CreateDocumentResult(true, document.Id);
   }

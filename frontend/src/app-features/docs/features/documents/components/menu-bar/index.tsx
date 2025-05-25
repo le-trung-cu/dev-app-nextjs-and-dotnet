@@ -8,7 +8,7 @@ import { FormatMenuItem } from "./format-menu-item";
 
 export const MenuBar = () => {
   return (
-    <MenubarUi className="border-0 print:hidden">
+    <MenubarUi className="border-0 print:hidden py-0 h-[24px] pb-2">
       <FileMenuItem />
       <EditMenuItem />
       <InsertMenuItem/>

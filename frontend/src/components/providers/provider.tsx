@@ -54,8 +54,12 @@ type ProvidersProps = {
   refreshToken?: string;
 };
 export function Providers({ children, authenticated }: ProvidersProps) {
-  clients.defaults.headers.common["Authorization"] =
-    `Bearer ${authenticated?.token}`;
+  if (!!authenticated?.token) {
+    clients.defaults.headers.common["Authorization"] =
+      `Bearer ${authenticated?.token}`;
+  } else {
+    clients.defaults.headers.common["Authorization"] = undefined;
+  }
 
   const queryClient = getQueryClient();
 

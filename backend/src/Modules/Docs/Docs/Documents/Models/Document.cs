@@ -23,4 +23,9 @@ public class Document : Entity<Guid>
 
     return document;
   }
+
+  public void Rename(string newName)
+  {
+    Title = newName;
+  }
 }

@@ -10,6 +10,7 @@ public class DocumentDbContext(DbContextOptions<DocumentDbContext> options) : Db
 
   protected override void OnModelCreating(ModelBuilder builder)
   {
+    builder.HasDefaultSchema("docs");
     base.OnModelCreating(builder);
     builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
   }

@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Catalog.Data.Seed;
 
-public class CatalogDataSeeder(ILogger<CatalogDataSeeder> logger, CatalogDbContext dbContext) : IDataSeeder
+public class CatalogDataSeeder(ILogger<CatalogDataSeeder> logger, CatalogDbContext dbContext) : IDataSeeder<CatalogDbContext>
 {
   public async Task SeedAllAsync()
   {

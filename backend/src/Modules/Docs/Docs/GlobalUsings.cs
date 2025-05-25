@@ -1,0 +1,10 @@
+global using Docs.Data;
+global using Microsoft.EntityFrameworkCore.Diagnostics;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.EntityFrameworkCore;
+global using Microsoft.AspNetCore.Builder;
+global using Shared.Data;
+global using Carter;
+global using MediatR;
+global using Microsoft.AspNetCore.Routing;

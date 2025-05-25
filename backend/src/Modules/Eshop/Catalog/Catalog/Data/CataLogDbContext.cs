@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using Catalog.Data.Configurations;
 using Catalog.Products.Models;
 using Microsoft.EntityFrameworkCore;
 using Shared.Models;
@@ -17,6 +18,8 @@ public class CatalogDbContext(DbContextOptions<CatalogDbContext> options) : DbCo
     modelBuilder.HasDefaultSchema("eshop.catalog");
     modelBuilder.Entity<Media>().ToTable("Medias", "eshop.medias");
     base.OnModelCreating(modelBuilder);
-    modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+    modelBuilder.ApplyConfiguration(new CategoryConfiguration());
+    modelBuilder.ApplyConfiguration(new ProductConfiguration());
+    // modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
   }
 }

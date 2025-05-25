@@ -19,12 +19,12 @@ public static class CatalogModule
     // 3. Data - Infrastructure services
     // services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
     // services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventsInterceptor>();
-    services.AddScoped<IDataSeeder, CatalogDataSeeder>();
     services.AddDbContext<CatalogDbContext>((sp, options) =>
     {
       options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
       options.UseNpgsql(configuration.GetConnectionString("Database"));
     });
+    // services.AddScoped<IDataSeeder, CzatalogDataSeeder>();
 
     return services;
   }

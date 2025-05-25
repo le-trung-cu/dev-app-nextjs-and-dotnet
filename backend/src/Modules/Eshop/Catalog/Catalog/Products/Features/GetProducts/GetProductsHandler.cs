@@ -5,8 +5,12 @@ using Tenants.Contracts.Tenants.Features;
 
 namespace Catalog.Products.Features.GetProducts;
 
-public record GetProductsQuery(string? TenantId, string? CategoryId, PaginationRequest PaginationRequest)
-		: IQuery<GetProductsResult>;
+public record GetProductsQuery
+	: PaginationRequest, IQuery<GetProductsResult>
+{
+	public string? TenantId { get; set; }
+	public string? CategoryId { get; set; }
+}
 public record GetProductsResult(PaginatedResult<ProductDto> Products, IEnumerable<TenantDto> Tenants);
 
 internal class GetProductsHandler(CatalogDbContext dbContext, ISender sender)
@@ -17,8 +21,8 @@ internal class GetProductsHandler(CatalogDbContext dbContext, ISender sender)
 		// get products using dbContext
 		// return result
 
-		var pageIndex = query.PaginationRequest.PageIndex;
-		var pageSize = query.PaginationRequest.PageSize;
+		var pageIndex = query.PageIndex;
+		var pageSize = query.PageSize;
 
 
 		var productsQuery = dbContext.Products.AsNoTracking();

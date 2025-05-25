@@ -7,18 +7,18 @@ import { useEffect } from "react";
 export default function SlackHomePageClient () {
   const [open, setOpen] = useCreateWorkspaceDialog();
 
-  const {data: workspaces, isLoading} = useGetWorkspaces();
+  const {data: workspaces, isPending} = useGetWorkspaces();
   const workpsaceId = workspaces?.[0]?.id;
   const router = useRouter();
   useEffect(() => {
-    if(isLoading) return;
+    if(isPending) return;
     if(workpsaceId) {
       //TODO: redirect to workspace
       router.replace(`/slack/workspaces/${workpsaceId}`)
-    } else if(!open){
+    } else {
       setOpen(true);
     }
-  }, [workpsaceId, isLoading, open, setOpen, router]);
+  }, [workpsaceId, isPending, setOpen, router]);
 
-  return <h1>Home</h1>
+  return <div></div>
 }

@@ -21,10 +21,11 @@ import { memo, useState } from "react";
 import { Ruler } from "./ruler";
 
 type EditorProps = {
+  content: string | null;
   setEditor: (editor: Editor | null) => void;
 };
 
-export const DocEditor_ = ({ setEditor }: EditorProps) => {
+export const DocEditor_ = ({content, setEditor }: EditorProps) => {
   const [padding, setPadding] = useState({ paddingLeft: 56, paddingRight: 56 });
 
   const editor = useEditor({
@@ -159,38 +160,7 @@ export const DocEditor_ = ({ setEditor }: EditorProps) => {
         types: ["heading", "paragraph"],
       }),
     ],
-    content: `
-      <h1>This is a 1st level heading</h1>
-      <h2>This is a 2nd level heading</h2>
-      <h3>This is a 3rd level heading</h3>
-      <p>Hello World! 🌎️</p>
-      <p>Hello World! 🌎️</p>
-      <p>Hello World! 🌎️</p>
-      <p>Hello World! 🌎️</p>
-      <p>Hello World! 🌎️</p>
-      <table>
-        <tbody>
-          <tr>
-            <th>Name</th>
-            <th colspan="3">Description</th>
-          </tr>
-          <tr>
-            <td>Cyndi Lauper</td>
-            <td>Singer</td>
-            <td>Songwriter</td>
-            <td>Actress</td>
-          </tr>
-        </tbody>
-      </table>
-      <p>This is a basic example of implementing images. Drag to re-order.</p>
-      <p>
-        Wow, this editor has support for links to the whole <a href="https://en.wikipedia.org/wiki/World_Wide_Web">world wide web</a>. We tested a lot of URLs and I think you can add *every URL* you want. Isn’t that cool? Let’s try <a href="https://statamic.com/">another one!</a> Yep, seems to work.
-      </p>
-      <p style="text-align: center">first paragraph</p>
-      <p style="text-align: right">second paragraph</p>
-      <img src="https://placehold.co/800x400" />
-      <img src="https://placehold.co/800x400/6A00F5/white" />
-    `,
+    content, 
   });
 
   return (
@@ -210,3 +180,37 @@ export const DocEditor_ = ({ setEditor }: EditorProps) => {
 };
 
 export const DocEditor = memo(DocEditor_);
+
+
+// const content = `
+//       <h1>This is a 1st level heading</h1>
+//       <h2>This is a 2nd level heading</h2>
+//       <h3>This is a 3rd level heading</h3>
+//       <p>Hello World! 🌎️</p>
+//       <p>Hello World! 🌎️</p>
+//       <p>Hello World! 🌎️</p>
+//       <p>Hello World! 🌎️</p>
+//       <p>Hello World! 🌎️</p>
+//       <table>
+//         <tbody>
+//           <tr>
+//             <th>Name</th>
+//             <th colspan="3">Description</th>
+//           </tr>
+//           <tr>
+//             <td>Cyndi Lauper</td>
+//             <td>Singer</td>
+//             <td>Songwriter</td>
+//             <td>Actress</td>
+//           </tr>
+//         </tbody>
+//       </table>
+//       <p>This is a basic example of implementing images. Drag to re-order.</p>
+//       <p>
+//         Wow, this editor has support for links to the whole <a href="https://en.wikipedia.org/wiki/World_Wide_Web">world wide web</a>. We tested a lot of URLs and I think you can add *every URL* you want. Isn’t that cool? Let’s try <a href="https://statamic.com/">another one!</a> Yep, seems to work.
+//       </p>
+//       <p style="text-align: center">first paragraph</p>
+//       <p style="text-align: right">second paragraph</p>
+//       <img src="https://placehold.co/800x400" />
+//       <img src="https://placehold.co/800x400/6A00F5/white" />
+//     `,

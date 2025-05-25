@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../../Modules/Auth/Auth/Auth.csproj" />
+    <ProjectReference Include="../../Modules/Docs/Docs/Docs.csproj" />
     <ProjectReference Include="../../Modules/Eshop/Basket/Basket/Basket.csproj" />
     <ProjectReference Include="../../Modules/Eshop/Catalog/Catalog/Catalog.csproj" />
     <ProjectReference Include="../../Modules/Eshop/Medias/EshopMedias/EshopMedias.csproj" />

@@ -25,8 +25,6 @@ export default function ClientPage() {
     channelId,
   });
 
-  console.log("DDDDD", isFetchingNextPage);
-
   const isLoading = getChannelLoading;
 
   if (isLoading) {

@@ -10,7 +10,7 @@ import { useCurrentInfo } from "@/app-features/auth/api/use-current-info";
 
 export const CartButton = () => {
   const tenantId = useTenantId();
-  const {data: user} = useCurrentInfo({});
+  const {data: user} = useCurrentInfo();
   const {data: basket} = useGetBasket({tenantId, userId: user?.user.id!, });
   
   return (

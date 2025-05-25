@@ -1,3 +1,4 @@
+"use client";
 import { Editor } from "@tiptap/core";
 import { useEffect, useRef } from "react";
 import { useToolbarContext } from "./toolbar-context";

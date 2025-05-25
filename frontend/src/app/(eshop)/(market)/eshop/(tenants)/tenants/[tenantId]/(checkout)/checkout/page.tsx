@@ -11,7 +11,7 @@ import { Fragment } from "react";
 
 export default function Page() {
   const tenantId = useTenantId();
-  const { data: user } = useCurrentInfo({});
+  const { data: user, isLoading: isLoadingUser } = useCurrentInfo();
   const { data: shoppingCart, isLoading } = useGetBasket({
     tenantId,
     userId: user?.user.id as string,
@@ -20,7 +20,7 @@ export default function Page() {
   const { mutate: addCartItemApi } = useAddCartItem();
   const { mutate: removeCartItemApi } = useRemoveCartItem();
 
-  if (isLoading) {
+  if (isLoadingUser || isLoading) {
     return (
       <div className="container mx-auto mt-20 flex gap-20 px-5">
         <Loader2Icon className="animate-spin" />;

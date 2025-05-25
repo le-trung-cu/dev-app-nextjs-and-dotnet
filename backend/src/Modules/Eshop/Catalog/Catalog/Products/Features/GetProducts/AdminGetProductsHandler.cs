@@ -1,8 +1,12 @@
 namespace Catalog.Products.Features.GetProducts;
 
 
-public record AdminGetProductsQuery(string? TenantId, string? CategoryId, PaginationRequest PaginationRequest)
-    : IQuery<AdminGetProductsResult>;
+public record AdminGetProductsQuery
+    : PaginationRequest, IQuery<AdminGetProductsResult>
+{
+  public string? TenantId { get; set; }
+  public string? CategoryId { get; set; }
+}
 public record AdminGetProductsResult(PaginatedResult<ProductDto> Products, IEnumerable<TenantDto> Tenants);
 
 internal class AdminGetProductsHandler
@@ -43,9 +47,9 @@ internal class AdminGetProductsHandler
 
     var totalCount = await productsQuery.LongCountAsync(cancellationToken);
 
-    
-    var pageIndex = query.PaginationRequest.PageIndex;
-    var pageSize = query.PaginationRequest.PageSize;
+
+    var pageIndex = query.PageIndex;
+    var pageSize = query.PageSize;
     var products = await productsQuery.OrderBy(p => p.Name)
                     .Skip(pageSize * (pageIndex - 1))
                     .Take(pageSize)

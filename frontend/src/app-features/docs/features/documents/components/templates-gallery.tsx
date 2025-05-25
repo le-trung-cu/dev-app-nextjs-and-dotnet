@@ -16,11 +16,12 @@ export const TemplatesGallery = () => {
   const { mutate: createDocumentApi, isPending: isCreating } =
     useCreateDocument();
 
-  const onCreateDocument = () => {
+  const onCreateDocument = (title: string, initialContent: string) => {
     if (isCreating) return;
     createDocumentApi(
       {
-        title: "new doc",
+        title,
+        initialContent
       },
       {
         onSuccess: (data) => {
@@ -43,7 +44,7 @@ export const TemplatesGallery = () => {
           <CarouselContent className="">
             {templates.map((item) => (
               <CarouselItem
-                key={item.key}
+                key={item.id}
                 className="basis-1/2 pl-4 sm:basis-1/3 md:basis-1/4 lg:basis-1/5 xl:basis-1/6 2xl:basis-[14.285714%]"
               >
                 <Card className="rounded-none p-0">
@@ -51,14 +52,14 @@ export const TemplatesGallery = () => {
                     <button
                       className="relative h-[250px] w-full cursor-pointer bg-cover bg-no-repeat disabled:opacity-30 xl:h-[200px]"
                       style={{
-                        backgroundImage: `url(${item.image})`,
+                        backgroundImage: `url(${item.imageUrl})`,
                       }}
-                      onClick={onCreateDocument}
+                      onClick={() =>onCreateDocument(item.label, item.initialContent)}
                       disabled={isCreating}
                     ></button>
                   </CardContent>
                 </Card>
-                <p className="truncate text-sm font-medium">{item.title}</p>
+                <p className="truncate text-sm font-medium">{item.label}</p>
               </CarouselItem>
             ))}
           </CarouselContent>

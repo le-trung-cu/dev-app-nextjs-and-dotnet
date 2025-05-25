@@ -2,20 +2,15 @@
 
 namespace Catalog.Products.Features.GetProducts;
 
-public record GetProductsRequest
-    (string? TenantId, string? CategoryId, int PageIndex = 0, int PageSize = 10)
-    : PaginationRequest(PageIndex, PageSize);
-
 // public record GetProductsResponse(PaginatedResult<ProductDto> Products);
 
 public class GetProductsEndpoint : ICarterModule
 {
     public void AddRoutes(IEndpointRouteBuilder app)
     {
-        app.MapGet("/api/eshop/products", async ([AsParameters] GetProductsRequest request, ISender sender) =>
+        app.MapGet("/api/eshop/products", async ([AsParameters] GetProductsQuery request, ISender sender) =>
         {
-            var result = await sender.Send(new GetProductsQuery(request.TenantId, request.CategoryId, new PaginationRequest(request.PageIndex, request.PageSize)));
-
+            var result = await sender.Send(request);
 
             return Results.Ok(result);
         })

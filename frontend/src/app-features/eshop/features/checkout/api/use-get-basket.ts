@@ -9,6 +9,7 @@ export const useGetBasket = ({
   userId: string;
 }) => {
   const query = useQuery({
+    enabled: !!tenantId && !userId,
     queryKey: ["basket", tenantId, userId],
     queryFn: async () => {
       try {

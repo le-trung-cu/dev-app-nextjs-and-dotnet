@@ -9,7 +9,7 @@ export const useCreateWorkspace = () => {
   const mutation = useMutation({
     mutationFn: async (data: z.infer<typeof createWorkspaceSchema>) => {
       const response = await clients.post<{ id: string }>(
-        "/api/slack/workspaces",
+        "/api/slack/workspaces", 
         data
       );
       if (response.data.id) {
@@ -17,7 +17,7 @@ export const useCreateWorkspace = () => {
       }
       throw new Error("has some error");
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast.success("Create workspace success");
       queryClient.invalidateQueries({queryKey: ["workspaces"]});
     },

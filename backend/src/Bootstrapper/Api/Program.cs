@@ -12,6 +12,7 @@ using Shared.Messaging.Extensions;
 using Basket;
 using Ordering;
 using EshopMedias;
+using Docs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,7 @@ builder.Services.AddScoped<IUploadFileService, UploadFileService>();
 var authAssembly = typeof(AuthModule).Assembly;
 var jiraAssembly = typeof(JiraTaskManagerModule).Assembly;
 var slackAssembly = typeof(SlackChatModule).Assembly;
+var documentAssembly = typeof(DocumentModule).Assembly;
 /*Eshop*/
 var mediaAssembly = typeof(EshopMediaModule).Assembly;
 var tenantAssembly = typeof(EshopTenantModule).Assembly;
@@ -46,6 +48,7 @@ builder.Services
     .AddAuthModule(builder.Configuration)
     .AddJiraTaskManagerModule(builder.Configuration)
     .AddSlackChatModule(builder.Configuration)
+    .AddDocumentModule(builder.Configuration)
     /*Eshop*/
     .AddEshopMediaModule(builder.Configuration)
     .AddEshopTenantModule(builder.Configuration)
@@ -57,6 +60,7 @@ builder.Services.AddMediatRWithAssemblies(
     authAssembly,
     jiraAssembly,
     slackAssembly,
+    documentAssembly,
     /*Eshop*/
     mediaAssembly,
     tenantAssembly,
@@ -67,6 +71,7 @@ builder.Services.AddCarterAssemblies(
     authAssembly,
     jiraAssembly,
     slackAssembly,
+    documentAssembly,
     /*Eshop*/
     mediaAssembly,
     tenantAssembly,
@@ -109,6 +114,7 @@ app.UseStaticFiles();
 app.UseAuthModule()
     .UseJiraTaskManagerModule()
     .UseSlackChatModule()
+    .UseDocumentModule()
     .UseEshopMediaModule()
     .UseEshopTenantModule()
     .UseEshopCatalogModule()

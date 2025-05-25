@@ -45,8 +45,9 @@ export const CreateWorkspaceDialog = ({ onCancel }: CreateWorkspaceFormProps) =>
 
     mutate(data, {
       onSuccess: (data) => {
-        router.push(`/slack/workspaces/${data.id}`);
+        handleClose();
         setOpen(false);
+        router.push(`/slack/workspaces/${data.id}`);
       },
     });
   };
