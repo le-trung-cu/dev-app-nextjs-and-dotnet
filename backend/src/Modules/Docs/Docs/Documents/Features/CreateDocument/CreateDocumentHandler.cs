@@ -19,7 +19,8 @@ public class CreateDocumentHandler
   public async Task<CreateDocumentResult> Handle(CreateDocumentCommand command, CancellationToken cancellationToken)
   {
     var userId = user.GetUserId();
-    var document = Document.Create(command.Title, userId, command.InitialContent);
+    var organizationId = user.GetAppDocsOrganizationId();
+    var document = Document.Create(command.Title, userId, command.InitialContent, null, organizationId);
     dbContext.Documents.Add(document);
     await dbContext.SaveChangesAsync(cancellationToken);
     return new CreateDocumentResult(true, document.Id);

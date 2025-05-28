@@ -17,7 +17,7 @@ export const loginSchema = z.object({
   password: z.string().min(1),
 });
 
-type User = {
+export type User = {
   id: string;
   name: string;
   email: string;

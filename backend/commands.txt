@@ -1,6 +1,6 @@
 dotnet ef migrations add RefreshToken -o ./Data/Migrations -c AuthDbContext -s ../../../Bootstrapper/Api/Api.csproj 
 dotnet ef migrations remove -c AuthDbContext -s ../../../Bootstrapper/Api/Api.csproj 
-dotnet ef migrations remove -c CatalogDbContext -s ../../../../Bootstrapper/Api/Api.csproj 
+dotnet ef migrations remove -c DocumentDbContext -s ../../../../Bootstrapper/Api/Api.csproj 
 
 
 dotnet ef migrations add add_Project_table -o ./Data/Migrations -c WorkspaceDbContext -s ../../../Bootstrapper/Api/Api.csproj 
@@ -13,8 +13,8 @@ dotnet ef migrations add SequentialGuidIdMessageeMigration -o ./Data/Migrations 
 
 dotnet ef database update -c SlackChat.Data.WorkspaceDbContext
 dotnet ef database update -c MediaDbContext
-dotnet ef database update -c CatalogDbContext
+dotnet ef database update -c DocumentDbContext
 
 dotnet ef migrations add AddTenantIdColoumnShoppingCard -o ./Data/Migrations -c BasketDbContext -s ../../../../Bootstrapper/Api/Api.csproj 
 dotnet ef migrations add Initial -o ./Data/Migrations -c MediaDbContext -s ../../../../Bootstrapper/Api/Api.csproj 
-dotnet ef migrations add AddImage -o ./Data/Migrations -c CatalogDbContext -s ../../../../Bootstrapper/Api/Api.csproj 
+dotnet ef migrations add UpdateMemberRole -o ./Data/Migrations -c DocumentDbContext -s ../../../Bootstrapper/Api/Api.csproj 

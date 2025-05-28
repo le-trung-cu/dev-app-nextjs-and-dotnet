@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
 import { Providers } from "@/components/providers/provider";
 import { Toaster } from "sonner";
 import { getCurrent } from "@/app-features/auth/actions";
+
+import "./globals.css";
+import "@liveblocks/react-ui/styles.css";
+import "@liveblocks/react-tiptap/styles.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

@@ -1,3 +1,5 @@
+using Shared.Extensions;
+
 namespace Auth.Auth.Features.Login;
 
 public record LoginCommand(string Email, string Password, string? DeviceId)

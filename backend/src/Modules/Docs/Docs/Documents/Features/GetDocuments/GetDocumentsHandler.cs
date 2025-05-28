@@ -18,17 +18,17 @@ public class GetDocumentsHandler
   public async Task<GetDocumentsResult> Handle(GetDocumentsQuery query, CancellationToken cancellationToken)
   {
     var docsQuery = dbContext.Documents.AsNoTracking();
-
-    if (query.OrganizationId.HasValue)
+    var organizationId = user.GetAppDocsOrganizationId();
+    if (organizationId.HasValue)
     {
-      docsQuery = docsQuery.Where(x => x.OrganizationId == query.OrganizationId);
+      docsQuery = docsQuery.Where(x => x.OrganizationId == organizationId);
     }
     if (!string.IsNullOrWhiteSpace(query.Search))
     {
       docsQuery = docsQuery.Where(x => x.Title.Contains(query.Search));
     }
 
-    if (!query.OrganizationId.HasValue && string.IsNullOrWhiteSpace(query.Search))
+    if (!organizationId.HasValue && string.IsNullOrWhiteSpace(query.Search))
     {
       docsQuery = docsQuery.Where(x => x.OwnerId == user.GetUserId().ToString());
     }

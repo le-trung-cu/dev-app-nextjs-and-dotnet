@@ -14,8 +14,8 @@ public class ChangePasswordHandler
 {
   public async Task<ChangePasswordResult> Handle(ChangePasswordCommand command, CancellationToken cancellationToken)
   {
-    var claimsPrincipal = contextAccessor.HttpContext?.User ?? throw new BadRequestException("Unauthrized");
-    var user = await userManager.GetUserAsync(claimsPrincipal) ?? throw new BadRequestException("Unauthrized");
+    var claimsPrincipal = contextAccessor.HttpContext?.User ?? throw new BadRequestException("Unauthorized");
+    var user = await userManager.GetUserAsync(claimsPrincipal) ?? throw new BadRequestException("Unauthorized");
 
     var result = await userManager.ChangePasswordAsync(user, command.CurrentPassword, command.NewPassword);
 

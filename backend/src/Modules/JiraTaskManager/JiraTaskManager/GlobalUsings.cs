@@ -16,4 +16,3 @@ global using MediatR;
 global using Microsoft.AspNetCore.Builder;
 global using Microsoft.AspNetCore.Routing;
 global using JiraTaskManager.Workspaces.Exceptions;
-global using Microsoft.IdentityModel.Tokens;

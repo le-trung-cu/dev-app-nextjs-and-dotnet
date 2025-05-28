@@ -1,4 +1,8 @@
 "use client";
+import {
+  useLiveblocksExtension,
+  FloatingToolbar,
+} from "@liveblocks/react-tiptap";
 import { useEditor, EditorContent, Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextStyle from "@tiptap/extension-text-style";
@@ -19,17 +23,23 @@ import { FontSize } from "../extensions/font-size";
 import { LineHeight } from "../extensions/line-height";
 import { memo, useState } from "react";
 import { Ruler } from "./ruler";
+import { Threads } from "../../documents/components/threads";
 
 type EditorProps = {
   content: string | null;
   setEditor: (editor: Editor | null) => void;
 };
 
-export const DocEditor_ = ({content, setEditor }: EditorProps) => {
+export const DocEditor_ = ({ content, setEditor }: EditorProps) => {
+  const liveblocks = useLiveblocksExtension({
+    initialContent: content,
+    enablePermanentUserData: true,
+  });
   const [padding, setPadding] = useState({ paddingLeft: 56, paddingRight: 56 });
 
   const editor = useEditor({
     immediatelyRender: false,
+    shouldRerenderOnTransaction: false,
     onCreate({ editor }) {
       setEditor(editor);
     },
@@ -59,7 +69,10 @@ export const DocEditor_ = ({content, setEditor }: EditorProps) => {
       },
     },
     extensions: [
+      liveblocks,
       StarterKit.configure({
+        // The Liveblocks extension comes with its own history handling
+        history: false,
         blockquote: {},
       }),
       LineHeight.configure({
@@ -160,12 +173,11 @@ export const DocEditor_ = ({content, setEditor }: EditorProps) => {
         types: ["heading", "paragraph"],
       }),
     ],
-    content, 
   });
 
   return (
     <div className="size-full min-h-screen overflow-x-auto bg-[#F9FBFd] px-4 pt-5 print:overflow-visible print:bg-white print:p-0">
-      <div className="fixed top-[104px] left-0 right-0 z-50 bg-background">
+      <div className="bg-background fixed top-[104px] right-0 left-0 z-50">
         <Ruler
           paddingLeft={padding.paddingLeft}
           paddingRight={padding.paddingRight}
@@ -180,7 +192,6 @@ export const DocEditor_ = ({content, setEditor }: EditorProps) => {
 };
 
 export const DocEditor = memo(DocEditor_);
-
 
 // const content = `
 //       <h1>This is a 1st level heading</h1>
