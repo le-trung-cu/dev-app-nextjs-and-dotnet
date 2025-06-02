@@ -28,7 +28,7 @@ public class Workspace : Aggregate<Guid>
     ArgumentException.ThrowIfNullOrWhiteSpace(userId);
     ArgumentException.ThrowIfNullOrWhiteSpace(name);
     var workspace = new Workspace(name, imgUrl);
-    workspace.AddMember(userId, MemberRole.Owner);
+    workspace.AddMember(userId, MemberRole.Admin);
 
     return workspace;
   }
@@ -69,16 +69,30 @@ public class Workspace : Aggregate<Guid>
     return member;
   }
 
+
+  public Member UpdateMember(string userId, MemberRole role)
+  {
+    var member = Members.FirstOrDefault(x => x.UserId == userId)
+      ?? throw new MemberNotFoundException(Id, userId);
+    // if (member.Role == MemberRole.Admin)
+    // {
+    //   var otherOwner = Members.FirstOrDefault(x => x.Role == MemberRole.Admin && x.UserId != userId)
+    //     ?? throw new BadRequestException("Can not remove this owner user");
+    // }
+    member.Role = role;
+    return member;
+  }
+
   public Member RemoveMember(string userId)
   {
     var member = Members.FirstOrDefault(x => x.UserId == userId)
       ?? throw new MemberNotFoundException(Id, userId);
 
-    if (member.Role == MemberRole.Owner)
-    {
-      var otherOwner = Members.FirstOrDefault(x => x.Role == MemberRole.Owner && x.UserId != userId)
-        ?? throw new BadRequestException("Can not remove this owner user");
-    }
+    // if (member.Role == MemberRole.Admin)
+    // {
+    //   var otherOwner = Members.FirstOrDefault(x => x.Role == MemberRole.Admin && x.UserId != userId)
+    //     ?? throw new BadRequestException("Can not remove this owner user");
+    // }
 
     _members.Remove(member);
 
@@ -145,7 +159,7 @@ public class Workspace : Aggregate<Guid>
     return task;
   }
 
-  public TaskItem UpdateTask(Guid taskId, Guid? projectId, string? assigneeId, string name, TaskItemStatus status, DateTime? endDate, string? description)
+  public TaskItem UpdateTask(Guid taskId, Guid? projectId, string? assigneeId, string name, TaskItemStatus status, DateTime? endDate)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(name);
     Guid? memberId = null;
@@ -163,7 +177,16 @@ public class Workspace : Aggregate<Guid>
 
     var task = _tasks.FirstOrDefault(x => x.Id == taskId) ?? throw new TaskItemNotFoundException(taskId);
 
-    task.Update(projectId, memberId, name, status, endDate, description);
+    task.Update(projectId, memberId, name, status, endDate);
+
+    return task;
+  }
+
+  public TaskItem UpdateTask(Guid taskId, string description)
+  {
+    var task = _tasks.FirstOrDefault(x => x.Id == taskId) ?? throw new TaskItemNotFoundException(taskId);
+
+    task.Update(description);
 
     return task;
   }
@@ -176,5 +199,4 @@ public class Workspace : Aggregate<Guid>
 
     return task;
   }
-
 }

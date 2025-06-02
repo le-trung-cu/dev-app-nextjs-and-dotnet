@@ -60,7 +60,7 @@ const menuItems = [
     text: "My Tasks",
     icon: CircleCheckIcon,
     getFullPath: ({ workspaceId }: { workspaceId: string }) =>
-      `/jira/workspaces/${workspaceId}/my-tasks`,
+      `/jira/workspaces/${workspaceId}/tasks`,
   },
   {
     path: "settings",

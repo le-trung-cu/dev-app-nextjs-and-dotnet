@@ -11,7 +11,6 @@ export const EditWorkspaceWraper = () => {
     isPending,
     isSuccess,
   } = useGetWorkspaceById({ workspaceId });
-  console.log("workspace", workspace);
 
   if (isPending)
     return (

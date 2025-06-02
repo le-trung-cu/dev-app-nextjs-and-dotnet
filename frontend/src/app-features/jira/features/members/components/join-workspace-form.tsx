@@ -27,7 +27,7 @@ export const JoinWorkspaceForm = () => {
       { workspaceId, inviteToken },
       {
         onSuccess: () => {
-          router.push(`/workspaces/${workspaceId}`);
+          router.push(`/jira/workspaces/${workspaceId}`);
         },
       }
     );

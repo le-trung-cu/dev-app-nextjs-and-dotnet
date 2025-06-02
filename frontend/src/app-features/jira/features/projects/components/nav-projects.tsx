@@ -60,7 +60,7 @@ export function NavProjects() {
             <SidebarMenuItem key={item.id}>
               <SidebarMenuButton asChild>
                 <Link
-                  href={`/jira/workspaces/${workspaceId}/projects/${item.id}`}
+                  href={`/jira/workspaces/${workspaceId}/tasks?projectId=${item.id}`}
                   className={cn(isActive && "bg-stone-300/30")}
                 >
                   <ProjectAvatar imgUrl={item.imgUrl} name={item.name} />

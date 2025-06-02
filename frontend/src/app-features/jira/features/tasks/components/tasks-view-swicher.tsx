@@ -24,8 +24,12 @@ import { parseAsString, useQueryState } from "nuqs";
 import { DataKanban } from "./data-kanban";
 import { BulkUpdateTasksRequestType } from "../types";
 import { useBulkUpdateTasks } from "../api/use-bulk-update-tasks";
+import { DataCalendar } from "./data-calendar";
 
-export const TasksViewSwicher = () => {
+type Props = {
+  hideProjectFilter?: boolean;
+}
+export const TasksViewSwicher = ({hideProjectFilter}:Props) => {
   const { open } = useCreateTaskDialog();
   const workspaceId = useWorkspaceId();
   const { filter } = useTaskFilters();
@@ -90,6 +94,7 @@ export const TasksViewSwicher = () => {
             <DataFilter
               projectOptions={projects ?? []}
               assigneeIdOptions={members ?? []}
+              hideProjectFilter={hideProjectFilter}
             />
           </div>
           <Separator className="" />
@@ -115,7 +120,13 @@ export const TasksViewSwicher = () => {
                   onTasksChange={onKanbanChange}
                 />
               </TabsContent>
-              <TabsContent value="calendar"></TabsContent>
+              <TabsContent value="calendar">
+                <DataCalendar
+                  tasks={tasksData?.tasks ?? []}
+                  members={tasksData?.members ?? {}}
+                  projects={mapProjects ?? {}}
+                />
+              </TabsContent>
             </>
           )}
         </Tabs>

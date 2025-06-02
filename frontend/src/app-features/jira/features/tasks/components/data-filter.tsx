@@ -17,16 +17,18 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 type DataFilterProps = {
   projectOptions: Project[];
   assigneeIdOptions: Member[];
+  hideProjectFilter?: boolean;
 };
 export const DataFilter = ({
   projectOptions,
   assigneeIdOptions,
+  hideProjectFilter,
 }: DataFilterProps) => {
   const { filter, setFilter } = useTaskFilters();
 
   const onFilterChange = (name: string, value: string | null) => {
-    if(value === "all") {
-      setFilter({[name]: ""});
+    if (value === "all") {
+      setFilter({ [name]: "" });
       return;
     }
     setFilter({ [name]: value });
@@ -35,29 +37,31 @@ export const DataFilter = ({
   return (
     <ScrollArea>
       <div className="flex items-center gap-2 pb-2.5">
-        <Select
-          value={filter.projectId ?? undefined}
-          onValueChange={(value) => onFilterChange("projectId", value)}
-        >
-          <SelectTrigger className="" size="sm">
-            <SelectValue placeholder="All projects" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all" className="text-muted-foreground">
-              All projects
-            </SelectItem>
-            {projectOptions.map((item) => (
-              <SelectItem key={item.id} value={item.id}>
-                <ProjectAvatar
-                  className="size-7"
-                  imgUrl={item.imgUrl}
-                  name={item.name}
-                />
-                {item.name}
+        {!hideProjectFilter && (
+          <Select
+            value={filter.projectId ?? undefined}
+            onValueChange={(value) => onFilterChange("projectId", value)}
+          >
+            <SelectTrigger className="" size="sm">
+              <SelectValue placeholder="All projects" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="text-muted-foreground">
+                All projects
               </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+              {projectOptions.map((item) => (
+                <SelectItem key={item.id} value={item.id}>
+                  <ProjectAvatar
+                    className="size-7"
+                    imgUrl={item.imgUrl}
+                    name={item.name}
+                  />
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
 
         <Select
           value={filter.assigneeId ?? undefined}

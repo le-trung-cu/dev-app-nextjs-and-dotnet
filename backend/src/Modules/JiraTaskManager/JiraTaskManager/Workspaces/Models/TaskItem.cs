@@ -27,13 +27,17 @@ public class TaskItem : Entity<Guid>
     Description = description;
   }
 
-  public void Update(Guid? projectId, Guid? assigneeId, string name, TaskItemStatus status, DateTime? endDate, string? description)
+  public void Update(Guid? projectId, Guid? assigneeId, string name, TaskItemStatus status, DateTime? endDate)
   {
     ProjectId = projectId;
     AssigneeId = assigneeId;
     Name = name;
     Status = status;
     EndDate = endDate;
+  }
+
+  public void Update(string description)
+  {
     Description = description;
   }
 

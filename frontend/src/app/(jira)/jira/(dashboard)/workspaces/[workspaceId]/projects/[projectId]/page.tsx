@@ -3,7 +3,7 @@ import { TasksViewSwicher } from "@/app-features/jira/features/tasks/components/
 export default function ProjectIdPage() {
   return (
     <div>
-      <TasksViewSwicher/>
+      <TasksViewSwicher hideProjectFilter/>
     </div>
   )
 } 

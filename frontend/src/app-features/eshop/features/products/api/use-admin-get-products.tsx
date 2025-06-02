@@ -1,6 +1,5 @@
 import { NEXT_PUBLIC_API_HOST_ADDRESS } from "@/constant";
 import { clients } from "@/lib/clients";
-import { sleep } from "@/lib/utils";
 import {
   QueryClient,
   useQuery,
@@ -37,7 +36,7 @@ export const useAdminGetProductsInfinitie = ({tenantId, categoryId}:{tenantId?: 
         queryArr.push(`categoryId=${categoryId}`);
       }
       queryArr.push(`pageIndex=${pageParam}`)
-      let queryString = queryArr.join("&");
+      const queryString = queryArr.join("&");
 
       const response = await axios.get(`/api/eshop/admin/products?${queryString}`, {
         baseURL: NEXT_PUBLIC_API_HOST_ADDRESS,

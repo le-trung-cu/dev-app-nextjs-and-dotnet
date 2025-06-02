@@ -11,9 +11,9 @@ import { Fragment } from "react";
 import Link from "next/link";
 
 type BreadcrumbMainProps = {
-  items: { href?: string; text?: string }[];
+  items: { href?: string; text?: string; icon?: React.ReactNode }[];
 };
-export const BreadcrumbMain = ({ items,  }: BreadcrumbMainProps) => {
+export const BreadcrumbMain = ({ items }: BreadcrumbMainProps) => {
   return (
     <div className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
       <div className="flex items-center gap-2 px-4">
@@ -26,11 +26,18 @@ export const BreadcrumbMain = ({ items,  }: BreadcrumbMainProps) => {
                 <BreadcrumbItem className="hidden md:block">
                   {item.href ? (
                     <BreadcrumbLink asChild>
-                      <Link href={item.href}>{item.text}</Link>
+                      <Link href={item.href}>
+                        <span className="inline-flex items-center space-x-2">
+                          {item.icon} <span>{item.text}</span>
+                        </span>
+                      </Link>
                     </BreadcrumbLink>
                   ) : (
                     <BreadcrumbLink href={item.href}>
-                      {item.text}
+                      <span className="inline-flex items-center space-x-2">
+                        {item.icon}
+                        <span>{item.text}</span>
+                      </span>
                     </BreadcrumbLink>
                   )}
                 </BreadcrumbItem>

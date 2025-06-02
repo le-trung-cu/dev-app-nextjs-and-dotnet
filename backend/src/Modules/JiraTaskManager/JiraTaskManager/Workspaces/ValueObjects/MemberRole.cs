@@ -5,6 +5,6 @@ namespace JiraTaskManager.Workspaces.ValueObjects;
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum MemberRole
 {
-  Owner,
+  Admin,
   Member
 }

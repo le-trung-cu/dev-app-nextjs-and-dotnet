@@ -14,7 +14,7 @@ export const ProductDetail = ({ productId }: { productId: string }) => {
       {JSON.stringify(product)}
       <div className="border border-black p-5 shadow">
         <figure>
-          <img src={null as unknown as string} />
+          <img src={null as unknown as string} alt=""/>
         </figure>
         <div>
           <h2 className="text-2xl font-bold">{product.name}</h2>

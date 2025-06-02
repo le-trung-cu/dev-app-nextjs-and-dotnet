@@ -14,4 +14,5 @@ export type GetDocumentsResponseType = {
   count: number;
   pageIndex: number;
   pageSize: number;
+  documents: Document[];
 };

@@ -4,13 +4,14 @@ import {
   Droppable,
   DropResult,
 } from "@hello-pangea/dnd";
-import { BulkUpdateTasksRequestType, StatusValues, Task } from "../types";
+import { BulkUpdateTasksRequestType, StatusValues, Task, TaskStatus } from "../types";
 import { Member } from "../../members/types";
 import { Project } from "../../projects/types";
 import { useCallback, useEffect, useState } from "react";
 import { KanbanCard } from "./kanban-card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { KanbanColumnHeader } from "./kanban-column-header";
 
 type Props = {
   tasks: Task[];
@@ -138,6 +139,7 @@ export const DataKanban = ({
               className="bg-muted/20 flex w-[300px] flex-1 shrink-0 flex-col rounded-sm border p-2"
             >
               <div className="p-2 font-semibold">{board}</div>
+              <KanbanColumnHeader board={board as TaskStatus} taskCount={data[board].length}/>
               <Separator />
               <Droppable droppableId={board}>
                 {(provided) => (

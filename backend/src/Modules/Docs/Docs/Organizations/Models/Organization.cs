@@ -88,6 +88,4 @@ public class Organization : Aggregate<Guid>
 
     return member;
   }
-
-
 }
