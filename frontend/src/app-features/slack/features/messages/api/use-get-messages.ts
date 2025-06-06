@@ -10,15 +10,17 @@ export const useGetMessages = ({
   workspaceId,
   channelId,
   parentMessageId,
+  conversationId,
 }: {
   workspaceId: string;
   channelId?: string;
   parentMessageId?: string | null;
+  conversationId?: string | null;
 }) => {
   const queryMembers = useGetMembers({ workspaceId });
 
   const queryMessages = useInfiniteQuery<PaginationMessages>({
-    queryKey: ["messages", workspaceId, channelId, parentMessageId],
+    queryKey: ["messages", workspaceId, channelId, parentMessageId, conversationId],
     initialPageParam: null,
     getNextPageParam: (lastPage, allPages) => {
       console.log(lastPage, allPages);
@@ -33,6 +35,9 @@ export const useGetMessages = ({
       }
       if (parentMessageId) {
         queryArr.push(`parentMessageId=${parentMessageId}`);
+      }
+      if (conversationId) {
+        queryArr.push(`conversationId=${conversationId}`);
       }
       if (pageParam) {
         queryArr.push(`cursor=${pageParam}`);
@@ -111,8 +116,10 @@ export const useGetMessages = ({
   useEffect(() => {
     if (!queryMessagesRef.current) return;
 
-    const memberIds = queryMessagesRef.current.pages.flatMap(page => {
-      return Object.entries(page.messages).map(([, message]) => message.message.memberId)
+    const memberIds = queryMessagesRef.current.pages.flatMap((page) => {
+      return Object.entries(page.messages).map(
+        ([, message]) => message.message.memberId,
+      );
     });
     const memberSet = new Set(memberIds);
 
@@ -134,19 +141,21 @@ export const useGetMessages = ({
   // }, [queryMessages.data]);
 
   const groupedMessages = useMemo(() => {
-    return  queryMessages.data?.pages.reduce((group, page) => {
-      page.ids.forEach(id => {
-        const date = new Date(page.messages[id].message.createdAt);
-        const dateKey = format(date, "yyyy-MM-dd");
-        if(!group[dateKey]) {
-          group[dateKey] = [];
-        }
-        group[dateKey].unshift(page.messages[id]);
-      })
-      return group;
-    }, {} as Record<string, PaginationMessages["messages"][number][]>);
+    return queryMessages.data?.pages.reduce(
+      (group, page) => {
+        page.ids.forEach((id) => {
+          const date = new Date(page.messages[id].message.createdAt);
+          const dateKey = format(date, "yyyy-MM-dd");
+          if (!group[dateKey]) {
+            group[dateKey] = [];
+          }
+          group[dateKey].unshift(page.messages[id]);
+        });
+        return group;
+      },
+      {} as Record<string, PaginationMessages["messages"][number][]>,
+    );
   }, [queryMessages.data]);
-  
 
   // console.log("allMessages", allMessages);
   return {

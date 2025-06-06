@@ -2,7 +2,7 @@ import { clients } from "@/lib/clients";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export const useDeleteWorkspace = () => {
+export const useDeleteChannel = () => {
   const mutation = useMutation({
     mutationFn: async ({
       workspaceId,
@@ -11,10 +11,10 @@ export const useDeleteWorkspace = () => {
       workspaceId: string;
       channelId: string;
     }) => {
-      const response = await clients.delete<{ isSucces: boolean }>(
+      const response = await clients.delete<{ isSuccess: boolean }>(
         `/api/slack/workspaces/${workspaceId}/channels/${channelId}`,
       );
-      if (!response.data.isSucces) {
+      if (!response.data?.isSuccess) {
         throw new Error("has some error");
       }
     },

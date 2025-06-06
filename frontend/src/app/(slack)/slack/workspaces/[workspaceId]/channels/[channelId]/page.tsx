@@ -4,9 +4,11 @@ import ClientPage from "./client-page";
 
 export default async function ChannelIdPage() {
   const current = await getCurrent();
-  if(!current) redirect("/login");
+  if (!current) redirect("/login");
 
   return (
-    <ClientPage/>
-  )
+    <>
+      <ClientPage />
+    </>
+  );
 }

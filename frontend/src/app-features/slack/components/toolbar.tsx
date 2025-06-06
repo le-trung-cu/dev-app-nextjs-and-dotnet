@@ -8,8 +8,8 @@ export const Toolbar = () => {
       <div className="flex-1"></div>
       <div className="flex-2">
         <Label className="relative">
-          <Search className="text-muted-foreground absolute left-2" />
-          <Input className="w-full pl-10" placeholder="Type to search..." />
+          <Search className="text-white absolute left-2" />
+          <Input className="w-full pl-10 bg-[#7B527D] text-white placeholder:text-white border-none" placeholder="Type to search..." />
         </Label>
       </div>
       <div className="flex-1"></div>

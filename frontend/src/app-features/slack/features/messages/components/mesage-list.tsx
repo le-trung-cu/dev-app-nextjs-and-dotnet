@@ -74,6 +74,7 @@ export const MessageList = ({
                     setEditingId={setEditingId}
                     isEditing={editingId === item.message.id}
                     reactions={item.reactions || []}
+                    userId={author?.userId}
                   />
                 </div>
               );

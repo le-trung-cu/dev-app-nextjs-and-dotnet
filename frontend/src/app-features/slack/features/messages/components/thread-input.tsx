@@ -4,11 +4,11 @@ import { useRef, useState } from "react";
 import Quill from "quill";
 import { useCreateMessage } from "../api/use-create-message";
 import { useWorkspaceId } from "../../workspaces/hooks/use-workspace-id";
-import { EditorValue } from "../../channels/components/editor";
+import { EditorValue } from "../../../components/editor";
 import { useParentMessageId } from "../hooks/use-parent-message-id";
 import { useChannelId } from "../../channels/hooks/use-channel-id";
 
-const Editor = dynamic(() => import("../../channels/components/editor"), {
+const Editor = dynamic(() => import("../../../components/editor"), {
   ssr: false,
   loading: () => (
     <div className="space-y-2 border p-2">

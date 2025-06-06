@@ -26,6 +26,7 @@ import { useCreateChannelDialog } from "../../channels/hooks/use-create-channel-
 import { MemberAvatar } from "../../members/components/member-avatar";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { useCurrentInfo } from "@/app-features/auth/api/use-current-info";
 
 export const WorkspaceSidebar = () => {
   const pathname = usePathname();
@@ -38,14 +39,15 @@ export const WorkspaceSidebar = () => {
     workspaceId,
   });
 
+  const { data: current } = useCurrentInfo();
+
   const isPending = isChannelsPending || isMembersPending;
   /* This is the second sidebar */
   /* We disable collapsible and let it fill remaining space */
   return (
     <Sidebar collapsible="none" className="hidden flex-1 md:flex">
-      <SidebarHeader className="gap-3.5 border-b p-4">
+      <SidebarHeader className="gap-3.5">
         <WorkspaceHeader />
-        <SidebarInput placeholder="Type to search..." />
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup className="px-0">
@@ -91,8 +93,10 @@ export const WorkspaceSidebar = () => {
                   <Link
                     href={href}
                     key={item.id}
-                    className={cn("hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex flex-col items-start gap-2 px-2 py-1.5 text-sm leading-tight whitespace-nowrap",
-                      isActive && "bg-sidebar-accent font-semibold"
+                    className={cn(
+                      "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex flex-col items-start gap-2 px-2 py-1.5 text-sm leading-tight whitespace-nowrap",
+                      isActive &&
+                        "bg-sidebar-accent text-primary font-semibold",
                     )}
                   >
                     <div className="flex w-full items-center gap-2">
@@ -103,9 +107,10 @@ export const WorkspaceSidebar = () => {
               })
             )}
             {members?.map((item) => {
+              if (item.userId == current?.user.id) return null;
               return (
                 <Link
-                  href="#"
+                  href={`/slack/workspaces/${workspaceId}/members/${item.userId}`}
                   key={item.id}
                   className="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground flex items-center gap-2 px-2 py-1.5 text-sm leading-tight whitespace-nowrap"
                 >

@@ -5,7 +5,7 @@ import { MemberAvatar } from "../../members/components/member-avatar";
 import { cn } from "@/lib/utils";
 import { Thumbnail } from "@/app-features/slack/components/thumbnail";
 import { Toolbar } from "./toolbar";
-import { EditorValue } from "../../channels/components/editor";
+import { EditorValue } from "../../../components/editor";
 import { useUpdateMessage } from "../api/use-update-message";
 import { useWorkspaceId } from "../../workspaces/hooks/use-workspace-id";
 import { useDeleteMessage } from "../api/use-delete-mesage";
@@ -14,14 +14,14 @@ import { useToggleReaction } from "../api/use-toggle-reaction";
 import { Reactions } from "./reactions";
 import { usePanel } from "@/app-features/slack/hooks/use-panel";
 
-const Editor = dynamic(() => import("../../channels/components/editor"));
+const Editor = dynamic(() => import("../../../components/editor"));
 const Renderer = dynamic(() => import("@/app-features/slack/components/renderer"), {
   ssr: false,
 });
 
 type MessageProps = {
   id: string;
-  memberId: string;
+  userId?: string;
   authorName?: string;
   authorImage?: string;
   isAuthor: boolean;
@@ -46,7 +46,7 @@ type MessageProps = {
 export const Message = ({
   id,
   isAuthor,
-  memberId,
+  userId,
   authorImage,
   authorName = "Member",
   body,
@@ -59,7 +59,7 @@ export const Message = ({
   reactions,
 }: MessageProps) => {
   const workspaceId = useWorkspaceId();
-  const { onOpenMessage } = usePanel();
+  const { onOpenMessage, onOpenProfile } = usePanel();
   const [ConfirmDialog, confirm] = useConfirm();
   const { mutate: updateMessageApi, isPending: isUpdateingMessage } =
     useUpdateMessage();
@@ -183,7 +183,9 @@ export const Message = ({
             isAuthor && "text-right",
           )}
         >
-          {authorName}
+          <span onClick={() => onOpenProfile(userId)}>
+            {authorName}
+          </span>
           <div
             className={cn(
               "absolute top-2 left-0 -translate-x-[calc(100%+2px)]",
@@ -249,73 +251,6 @@ export const Message = ({
               onChange={handleToggleReaction}
               className={cn(isAuthor && "justify-end")}
             />
-          </div>
-        )}
-      </div>
-    </>
-  );
-
-  return (
-    <>
-      <ConfirmDialog />
-      <div
-        className={cn(
-          "px-2 py-0.5",
-          isAuthor && "justify-self-end",
-          isEditing && "w-full",
-        )}
-      >
-        <div className={cn("flex gap-2", isAuthor && "flex-row-reverse")}>
-          <button>
-            <MemberAvatar
-              name={authorName}
-              className="mt-1 size-10 rounded-md text-xs"
-            />
-          </button>
-          <div>
-            <span className="text-sm font-bold">{authorName}</span>
-            <span>&nbsp;&nbsp;</span>
-            <Hint label={formatFullTime(new Date(createdAt))}>
-              <button className="text-muted-foreground text-xs hover:underline">
-                {format(new Date(createdAt), "hh:mm")}
-              </button>
-            </Hint>
-          </div>
-        </div>
-        {isEditing ? (
-          <div className="h-full w-full">
-            <Editor
-              onSubmit={handleUpdate}
-              onCancel={() => setEditingId("")}
-              defaultValue={JSON.parse(body)}
-              variant="update"
-              disabled={isUpdateingMessage}
-            />
-          </div>
-        ) : (
-          <div className={cn("flex", isAuthor && "flex-row-reverse")}>
-            <div
-              className={cn(
-                "group bg-muted/30 relative mx-12 min-w-[100px] rounded-xl rounded-tl-none border px-4 pb-2",
-                isAuthor &&
-                  "mr-12 ml-auto rounded-xl rounded-tr-none bg-blue-200",
-                isDeletingMessage &&
-                  "origin-bottom scale-y-0 transform bg-red-500/50 transition-all duration-200",
-              )}
-            >
-              <Renderer value={body} />
-              <Toolbar
-                isAuthor={isAuthor}
-                handleEdit={() => setEditingId(id)}
-                handleDelete={handleDelete}
-              />
-            </div>
-          </div>
-        )}
-
-        {imgUrl && (
-          <div className="p-2 px-12">
-            <Thumbnail imgUrl={imgUrl} />
           </div>
         )}
       </div>

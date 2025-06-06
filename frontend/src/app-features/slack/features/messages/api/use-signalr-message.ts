@@ -4,13 +4,12 @@ import { Message, PaginationMessages } from "../types";
 
 export const useSignalRMessage = ({ workspaceId }: { workspaceId: string }) => {
   const queryClient = useQueryClient();
-
   useSignalREffect(
     `slack:${workspaceId}:messages`,
     (message: Message) => {
-      console.log(message);
+      console.log({message});
       queryClient.setQueryData(
-        ["messages", workspaceId, message.channelId, message.parentMessageId],
+        ["messages", workspaceId, message.channelId, message.parentMessageId, message.conversationId],
         (oldData: { pageParams: string[]; pages: PaginationMessages[] }) => {
           if (!oldData || !oldData.pages || oldData.pages.length === 0) {
             return {

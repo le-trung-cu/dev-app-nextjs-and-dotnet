@@ -48,45 +48,46 @@ builder.Services
     .AddAuthModule(builder.Configuration)
     .AddJiraTaskManagerModule(builder.Configuration)
     .AddSlackChatModule(builder.Configuration)
-    .AddDocumentModule(builder.Configuration)
-    /*Eshop*/
-    .AddEshopMediaModule(builder.Configuration)
-    .AddEshopTenantModule(builder.Configuration)
-    .AddEshopCatalogModule(builder.Configuration)
-    .AddBasketModule(builder.Configuration)
-    .AddOrderingModule(builder.Configuration);
+    .AddDocumentModule(builder.Configuration);
+/*Eshop*/
+// .AddEshopMediaModule(builder.Configuration)
+// .AddEshopTenantModule(builder.Configuration)
+// .AddEshopCatalogModule(builder.Configuration)
+// .AddBasketModule(builder.Configuration)
+// .AddOrderingModule(builder.Configuration);
 
 builder.Services.AddMediatRWithAssemblies(
     authAssembly,
     jiraAssembly,
     slackAssembly,
-    documentAssembly,
+    documentAssembly
     /*Eshop*/
-    mediaAssembly,
-    tenantAssembly,
-    catalogAssembly,
-    basketAssembly,
-    orderingAssembly);
+    // mediaAssembly,
+    // tenantAssembly,
+    // catalogAssembly,
+    // basketAssembly,
+    // orderingAssembly
+    );
 builder.Services.AddCarterAssemblies(
     authAssembly,
     jiraAssembly,
     slackAssembly,
-    documentAssembly,
+    documentAssembly
     /*Eshop*/
-    mediaAssembly,
-    tenantAssembly,
-    catalogAssembly,
-    basketAssembly
+    // mediaAssembly,
+    // tenantAssembly,
+    // catalogAssembly,
+    // basketAssembly
     // orderingAssembly
     );
 
-builder.Services.AddMassTransitWithAssemblies(
-    builder.Configuration,
-    tenantAssembly,
-    catalogAssembly,
-    basketAssembly
-    // orderingAssembly
-    );
+// builder.Services.AddMassTransitWithAssemblies(
+//     builder.Configuration,
+//     tenantAssembly
+//     // catalogAssembly,
+//     // basketAssembly
+//     // orderingAssembly
+//     );
 
 builder.Services.AddCors(options =>
 {
@@ -114,11 +115,11 @@ app.UseStaticFiles();
 app.UseAuthModule()
     .UseJiraTaskManagerModule()
     .UseSlackChatModule()
-    .UseDocumentModule()
-    .UseEshopMediaModule()
-    .UseEshopTenantModule()
-    .UseEshopCatalogModule()
-    .UseBasketModule();
+    .UseDocumentModule();
+    // .UseEshopMediaModule()
+    // .UseEshopTenantModule()
+    // .UseEshopCatalogModule()
+    // .UseBasketModule();
 
 app.UseSlackChatHub();
 

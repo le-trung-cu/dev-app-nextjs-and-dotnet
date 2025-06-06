@@ -22,14 +22,18 @@ public class CreateMessageHandler
   public async Task<CreateMessageResult> Handle(CreateMessageCommand command, CancellationToken cancellationToken)
   {
     var userId = user.GetUserId();
-    var member = await dbContext.Members.AsNoTracking()
-      .Where(x => x.WorkspaceId == command.WorkspaceId && x.UserId == userId)
-      .FirstOrDefaultAsync(cancellationToken)
-      ?? throw new BadRequestException("Unauthorized");
 
     var workspaceQuery = dbContext.Workspaces
-      .Where(x => x.Id == command.WorkspaceId);
-    if(command.ChannelId.HasValue)
+      .Where(x => x.Id == command.WorkspaceId)
+      .Include(x => x.Members.Where(m => m.UserId == userId))
+      .AsQueryable();
+
+    if (command.ConversationId.HasValue)
+    {
+      workspaceQuery = workspaceQuery.Include(x => x.Conversations.Where(c => c.Id == command.ConversationId.Value));
+    }
+
+    if (command.ChannelId.HasValue)
     {
       workspaceQuery = workspaceQuery.Include(x => x.Channels.Where(t => t.Id == command.ChannelId.Value));
     }
@@ -41,9 +45,15 @@ public class CreateMessageHandler
 
     var workspace = await workspaceQuery.FirstOrDefaultAsync(cancellationToken)
       ?? throw new WorkspaceNotFoundException(command.WorkspaceId);
-    
+    if (workspace.Members.Count == 0)
+    {
+      throw new BadRequestException("Unauthorized");
+    }
+
+    var member = workspace.Members[0];
+
     string? imageUrl = null;
-    if(command.Image != null)
+    if (command.Image != null)
     {
       imageUrl = await fileService.SaveFileAsync(command.Image, Path.Combine("uploads", "slack", "messages"), cancellationToken);
     }

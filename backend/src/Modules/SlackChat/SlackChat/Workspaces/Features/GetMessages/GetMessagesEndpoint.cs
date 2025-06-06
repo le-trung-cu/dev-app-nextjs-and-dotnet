@@ -4,7 +4,7 @@ using Shared.Pagination;
 namespace SlackChat.Workspaces.Features.GetMessages;
 
 public record GetMessagesRequest
-  (Guid? Cursor, int? PageIndex, int PageSize, Guid? ChannelId, Guid? ConversationId, Guid? ParentMessageId)
+  (Guid? Cursor, int? PageIndex, int PageSize, Guid? ChannelId,  Guid? ParentMessageId, Guid? ConversationId)
   : PaginationWithCursorRequest<Guid?>(Cursor, PageIndex, PageSize)
 {
 }

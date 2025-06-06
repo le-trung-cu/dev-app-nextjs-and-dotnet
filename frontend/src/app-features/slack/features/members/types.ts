@@ -4,7 +4,7 @@ export type Member = {
   userId: string;
   name: string;
   email: string;
-  role: "Owner" | "Member";
+  role: "Admin" | "Member";
 };
 
 export type GetMembersResponseType = {
@@ -16,3 +16,9 @@ export type GetMemberResponseType = {
   isSuccess: boolean;
   member: Member;
 };
+
+
+export enum MemberRole {
+  Admin = 'Admin',
+  Member = 'Member'
+}

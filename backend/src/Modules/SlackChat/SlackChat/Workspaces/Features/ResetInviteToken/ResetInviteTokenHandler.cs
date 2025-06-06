@@ -17,7 +17,7 @@ public class ResetInviteTokenHandler
       .FirstOrDefaultAsync(cancellationToken)
       ?? throw new BadRequestException("Unauthorized");
 
-    if(member.Role != MemberRole.Owner)
+    if(member.Role != MemberRole.Admin)
     {
       throw new BadRequestException("Unauthorized");
     }

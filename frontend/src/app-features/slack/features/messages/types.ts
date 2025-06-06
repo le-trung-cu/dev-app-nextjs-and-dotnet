@@ -13,6 +13,7 @@ export type Message = {
   channelId: string;
   workspaceId: string;
   parentMessageId: string;
+  conversationId: string;
 };
 export type PaginationMessages = {
   cursor: string;

@@ -14,7 +14,7 @@ export const useCreateMessage = () => {
       conversationId,
     }: {
       workspaceId: string;
-      channelId: string;
+      channelId?: string | null;
       body?: string | null;
       image?: File | null;
       parentMessageId?: string | null;

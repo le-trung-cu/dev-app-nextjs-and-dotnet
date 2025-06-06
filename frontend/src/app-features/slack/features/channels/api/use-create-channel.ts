@@ -24,7 +24,7 @@ export const useCreateChannel = () => {
       throw new Error("has some error");
     },
     onSuccess: (data, { workspaceId }) => {
-      toast.success("Create workspace success");
+      toast.success("Create channel success");
       queryClient.invalidateQueries({ queryKey: ["channels", workspaceId] });
     },
     onError: (error) => {

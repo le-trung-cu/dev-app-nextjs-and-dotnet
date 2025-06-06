@@ -4,15 +4,15 @@ namespace SlackChat.Workspaces.Features.GetMessages;
 
 public record GetMessagesQuery : PaginationWithCursorRequest<Guid?>, IQuery<GetMessagesResult>
 {
-  public Guid WorkspaceId { get; init;}
-  public Guid? ChannelId { get; init;} = default;
-  public Guid? ConversationId { get; init; } = default;
+  public Guid WorkspaceId { get; init; }
+  public Guid? ChannelId { get; init; } = default;
+  public Guid? ConversationId { get; init; }
   public Guid? ParentMessageId { get; init; } = default;
 };
 
 public class GetMessagesResult
   (bool isSuccess, Guid? cursor, int pageSize, long count, IEnumerable<MessageDto> data)
-  : PaginatedWithCursorResult<MessageDto, Guid?>( cursor, pageSize, count, data)
+  : PaginatedWithCursorResult<MessageDto, Guid?>(cursor, pageSize, count, data)
 {
   public bool IsSuccess { get; set; } = isSuccess;
   public IEnumerable<ReactionCount> ReactionCounts { get; set; } = [];
@@ -26,20 +26,20 @@ public class GetMessagesHandler
   public async Task<GetMessagesResult> Handle(GetMessagesQuery query, CancellationToken cancellationToken)
   {
     var userId = user.GetUserId();
-    var member = await dbContext.Members.AsNoTracking()
-      .Where(x => x.WorkspaceId == query.WorkspaceId && x.UserId == userId)
+    var workspace = await dbContext.Workspaces
+      .AsNoTracking()
+      .Where(x => x.Id == query.WorkspaceId)
+      .Include(x => x.Members.Where(x => x.UserId == userId))
+      .Include(x => x.Conversations.Where(c => c.Id == query.ConversationId))
       .FirstOrDefaultAsync(cancellationToken)
+      ?? throw new WorkspaceNotFoundException(query.WorkspaceId);
+
+    var checkPermision = workspace.Members.FirstOrDefault(x => x.UserId == userId)
       ?? throw new BadRequestException("Unauthorized");
 
-    var conversationId = query.ConversationId;
-    Message? parentMessage = null;
-    if (!query.ConversationId.HasValue && !query.ChannelId.HasValue && query.ParentMessageId.HasValue)
+    if (query.ConversationId.HasValue && workspace.Conversations.Count == 0)
     {
-      parentMessage = await dbContext.Messages.AsNoTracking()
-        .Where(x => x.Id == query.ParentMessageId)
-        .FirstOrDefaultAsync(cancellationToken)
-        ?? throw new MessageNotFoundException(query.ParentMessageId.Value);
-      conversationId = parentMessage.ConversationId;
+      throw new ConversationNotFoundException(query.ConversationId.Value);
     }
 
     var messagesQuery = dbContext.Messages
@@ -56,7 +56,7 @@ public class GetMessagesHandler
       messagesQuery = messagesQuery.Where(x => x.ConversationId == query.ConversationId);
     }
 
-    if(query.Cursor.HasValue)
+    if (query.Cursor.HasValue)
     {
       messagesQuery = messagesQuery.Where(x => x.Id < query.Cursor);
     }
@@ -68,7 +68,7 @@ public class GetMessagesHandler
       .Take(query.PageSize)
       .ToListAsync(cancellationToken);
 
-    var result = new GetMessagesResult(true, count == 0? query.Cursor : messages.Last()?.Id, query.PageSize, count, messages.Adapt<IEnumerable<MessageDto>>());
+    var result = new GetMessagesResult(true, count == 0 ? query.Cursor : messages.Last()?.Id, query.PageSize, count, messages.Adapt<IEnumerable<MessageDto>>());
 
 
     var messageIds = messages.Select(x => x.Id);

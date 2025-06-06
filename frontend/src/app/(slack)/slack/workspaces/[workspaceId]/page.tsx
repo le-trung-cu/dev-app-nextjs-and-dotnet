@@ -26,7 +26,7 @@ export default function WorkpsaceIdPage() {
 
   const isLoading = workspaceLoading || channelsLoading || memberLoading;
   const channelId = channels?.[0]?.id;
-  const isAdmin = member?.role == "Owner";
+  const isAdmin = member?.role == "Admin";
 
   useEffect(() => {
     if (isLoading || !workspace) return;

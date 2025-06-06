@@ -5,9 +5,9 @@ import Quill from "quill";
 import { useCreateMessage } from "../../messages/api/use-create-message";
 import { useWorkspaceId } from "../../workspaces/hooks/use-workspace-id";
 import { useChannelId } from "../hooks/use-channel-id";
-import { EditorValue } from "./editor";
+import { EditorValue } from "../../../components/editor";
 
-const Editor = dynamic(() => import("./editor"), {
+const Editor = dynamic(() => import("../../../components/editor"), {
   ssr: false,
   loading: () => (
     <div className="space-y-2 border p-2">

@@ -29,7 +29,7 @@ public class Workspace : Aggregate<Guid>
     ArgumentException.ThrowIfNullOrWhiteSpace(name);
     var workspace = new Workspace(name);
     workspace.ResetInviteToken();
-    workspace.AddMember(userId, MemberRole.Owner);
+    workspace.AddMember(userId, MemberRole.Admin);
     workspace.AddChannel("channel-general");
     return workspace;
   }
@@ -64,14 +64,22 @@ public class Workspace : Aggregate<Guid>
     return member;
   }
 
+  public Member UpdateMember(string userId, MemberRole role)
+  {
+    var member = Members.FirstOrDefault(x => x.UserId == userId)
+      ?? throw new MemberNotFoundException(Id, userId);
+    member.Role = role;
+    return member;
+  }
+
   public Member RemoveMember(string userId)
   {
     var member = Members.FirstOrDefault(x => x.UserId == userId)
       ?? throw new MemberNotFoundException(Id, userId);
 
-    if (member.Role == MemberRole.Owner)
+    if (member.Role == MemberRole.Admin)
     {
-      var otherOwner = Members.FirstOrDefault(x => x.Role == MemberRole.Owner && x.UserId != userId)
+      var otherOwner = Members.FirstOrDefault(x => x.Role == MemberRole.Admin && x.UserId != userId)
         ?? throw new BadRequestException("Can not remove this owner user");
     }
 
@@ -91,6 +99,22 @@ public class Workspace : Aggregate<Guid>
     }
     var channel = new Channel(name);
     _channels.Add(channel);
+
+    return channel;
+  }
+
+  public Channel UpdateChannel(Guid channelId, string name)
+  {
+    ArgumentException.ThrowIfNullOrWhiteSpace(name);
+    name = Regex.Replace(name, @"\s+", "-");
+    var exists = _channels.Any(x => x.Id != channelId && x.Name == name);
+    if (exists)
+    {
+      throw new ChannelNameExistsException(name);
+    }
+    var channel = _channels.FirstOrDefault(x => x.Id == channelId)
+    ?? throw new ChannelNotFoundException(channelId);
+    channel.Name = name;
 
     return channel;
   }
@@ -118,6 +142,18 @@ public class Workspace : Aggregate<Guid>
     {
       parentMessage = _messages.FirstOrDefault(x => x.Id == parentMessageId.Value)
         ?? throw new MessageNotFoundException(parentMessageId.Value);
+    }
+
+    if (conversationId.HasValue)
+    {
+      var conversation = _conversations.FirstOrDefault(x => x.Id == conversationId.Value)
+        ??throw new ConversationNotFoundException(conversationId.Value);
+
+      var checkMember = conversation.MemberOneId == memberId || conversation.MemberTwoId == memberId;
+      if (!checkMember)
+      {
+        throw new BadRequestException("Unauthorized");
+      }
     }
 
     // Only possible if we are replying in a thread in 1:1 conversation
@@ -149,5 +185,19 @@ public class Workspace : Aggregate<Guid>
       ?? throw new MessageNotFoundException(messageId);
     _messages.Remove(message);
     return message;
+  }
+
+  public Conversation AddConversation(string userId1, string userId2)
+  {
+    var member1 = _members.FirstOrDefault(x => x.UserId == userId1)
+      ?? throw new MemberNotFoundException(userId1);
+    var member2 = _members.FirstOrDefault(x => x.UserId == userId2)
+      ?? throw new MemberNotFoundException(userId2);
+
+    (member1, member2) = (member2, member1);
+    var conversation = Conversation.Create(Id, member1.Id, member2.Id);
+    _conversations.Add(conversation);
+
+    return conversation;
   }
 }

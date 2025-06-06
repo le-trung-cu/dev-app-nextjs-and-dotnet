@@ -17,7 +17,7 @@ public class DeleteWorkspaceHandler
       .FirstOrDefaultAsync(cancellationToken)
       ?? throw new MemberNotFoundException(command.WorkspaceId, userId);
 
-    if (member.Role != MemberRole.Owner)
+    if (member.Role != MemberRole.Admin)
     {
       throw new BadRequestException("Unauthorized");
     }

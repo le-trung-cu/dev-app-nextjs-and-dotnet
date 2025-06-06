@@ -76,7 +76,7 @@ namespace SlackChat.Data.Migrations
                     b.Property<Guid>("MemberOneId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("MemeberTwoId")
+                    b.Property<Guid>("MemberTwoId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("WorkspaceId")
@@ -84,9 +84,14 @@ namespace SlackChat.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MemberTwoId");
+
                     b.HasIndex("WorkspaceId");
 
-                    b.ToTable("Conversation", "slack_chat");
+                    b.HasIndex("MemberOneId", "MemberTwoId")
+                        .IsUnique();
+
+                    b.ToTable("Conversations", "slack_chat");
                 });
 
             modelBuilder.Entity("SlackChat.Workspaces.Models.Member", b =>
@@ -107,8 +112,9 @@ namespace SlackChat.Data.Migrations
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("integer");
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -253,11 +259,27 @@ namespace SlackChat.Data.Migrations
 
             modelBuilder.Entity("SlackChat.Workspaces.Models.Conversation", b =>
                 {
+                    b.HasOne("SlackChat.Workspaces.Models.Member", "MemberOne")
+                        .WithMany()
+                        .HasForeignKey("MemberOneId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SlackChat.Workspaces.Models.Member", "MemberTwo")
+                        .WithMany()
+                        .HasForeignKey("MemberTwoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("SlackChat.Workspaces.Models.Workspace", null)
                         .WithMany("Conversations")
                         .HasForeignKey("WorkspaceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("MemberOne");
+
+                    b.Navigation("MemberTwo");
                 });
 
             modelBuilder.Entity("SlackChat.Workspaces.Models.Member", b =>
@@ -273,7 +295,8 @@ namespace SlackChat.Data.Migrations
                 {
                     b.HasOne("SlackChat.Workspaces.Models.Message", "ParentMessage")
                         .WithMany("Children")
-                        .HasForeignKey("ParentMessageId");
+                        .HasForeignKey("ParentMessageId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("SlackChat.Workspaces.Models.Workspace", null)
                         .WithMany("Messages")

@@ -14,9 +14,8 @@ import { differenceInMinutes, isToday, isYesterday } from "date-fns";
 import { TIME_THRESHOLD } from "../constant";
 import { useChannelId } from "../../channels/hooks/use-channel-id";
 
-export const Thread = () => {
+export const Thread = ({parentMessageId, onClose}: {parentMessageId: string, onClose: () => void}) => {
   const [editingId, setEditingId] = useState("");
-  const { parentMessageId, onClose } = usePanel();
   const workspaceId = useWorkspaceId();
   const channelId = useChannelId();
   const { data: currentMember, isLoading: isGetingCurrentMember } =
@@ -59,8 +58,8 @@ export const Thread = () => {
   const isLoadingMore = isFetchingNextPage;
   return (
     <div className="flex h-full flex-col">
-      <div className="flex justify-between border-b p-5">
-        <h3 className="text-2xl font-bold">Thread</h3>
+      <div className="flex justify-between border-b h-[49px] items-center px-4">
+        <h3 className="text-lg font-bold">Thread</h3>
         <Button variant="ghost" onClick={onClose}>
           <XIcon className="size-6" />
         </Button>
@@ -128,6 +127,7 @@ export const Thread = () => {
               setEditingId={setEditingId}
               isEditing={editingId === message.id}
               reactions={message.reactions || []}
+              userId={author?.userId}
             />
           )}
           <div

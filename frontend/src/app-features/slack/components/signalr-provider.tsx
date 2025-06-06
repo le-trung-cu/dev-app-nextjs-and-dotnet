@@ -17,12 +17,14 @@ export const SignalRProvider = ({
   const [mounted, setMounted] = useState(false);
   const workspaceId = useWorkspaceId();
 
+
   useEffect(() => {
     setMounted(true);
   }, []);
 
   if (!mounted) return children;
   // return ;
+  console.log("XXXXXXX", !!token && !!workspaceId && mounted)
 
   return (
     <SignalRContext.Provider
@@ -32,7 +34,7 @@ export const SignalRProvider = ({
       url={`${NEXT_PUBLIC_API_HOST_ADDRESS}/slack/chat/hubs?workspaceId=${workspaceId}`}
     >
       {children}
-      <SignalRComponent/>
+      <SignalRComponent workspaceId={workspaceId}/>
     </SignalRContext.Provider>
   );
 };

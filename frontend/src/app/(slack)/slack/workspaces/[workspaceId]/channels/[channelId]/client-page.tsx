@@ -2,6 +2,7 @@
 
 import { useGetChannel } from "@/app-features/slack/features/channels/api/use-get-channel";
 import { ChatInput } from "@/app-features/slack/features/channels/components/chat-input";
+import { Header } from "@/app-features/slack/features/channels/components/header";
 import { useChannelId } from "@/app-features/slack/features/channels/hooks/use-channel-id";
 import { useGetMessages } from "@/app-features/slack/features/messages/api/use-get-messages";
 import { MessageList } from "@/app-features/slack/features/messages/components/mesage-list";
@@ -45,6 +46,8 @@ export default function ClientPage() {
   }
 
   return (
+    <>
+    <Header name={channel.name}/>
     <div className="flex h-full flex-1 flex-col">
       <div className="relative inset-0 flex-1">
         <div className="absolute inset-0">
@@ -65,5 +68,6 @@ export default function ClientPage() {
         <ChatInput placeholder={`Message # ${channel.name}`} />
       </div>
     </div>
+    </>
   );
 }
