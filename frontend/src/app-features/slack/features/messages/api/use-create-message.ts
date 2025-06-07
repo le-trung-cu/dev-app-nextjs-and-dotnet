@@ -40,7 +40,7 @@ export const useCreateMessage = () => {
       throw new Error("has some error");
     },
     onSuccess: () => {
-      toast.success("send message success");
+      // toast.success("send message success");
     },
     onError: (error) => {
       toast.error(error.message);

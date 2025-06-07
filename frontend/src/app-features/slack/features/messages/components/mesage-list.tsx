@@ -39,7 +39,7 @@ export const MessageList = ({
   const [editingId, setEditingId] = useState("");
   const { data: currentMember } = useGetCurrentMember({ workspaceId });
   const groupedMessages = data;
-
+  console.log({groupedMessages})
   return (
     <div className="messages-scrollbar h-full flex flex-1 flex-col-reverse overflow-x-clip overflow-y-auto pb-4 px-5">
       {Object.entries(groupedMessages || {}).map(([dateKey, messages]) => {
@@ -75,6 +75,8 @@ export const MessageList = ({
                     isEditing={editingId === item.message.id}
                     reactions={item.reactions || []}
                     userId={author?.userId}
+                    threadCount={item.threads?.count}
+                    threadTimestamp={item.threads?.timestamp}
                   />
                 </div>
               );

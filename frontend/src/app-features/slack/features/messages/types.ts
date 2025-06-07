@@ -28,8 +28,9 @@ export type PaginationMessages = {
         value: string;
         memberIds: string[];
       }[];
-      threads: {
+      threads?: {
         count: number;
+        timestamp: string;
       };
     }
   >;
@@ -47,9 +48,10 @@ export type GetMessagesResponseType = {
     value: string;
     memberIds: string[];
   }[];
-  threads: {
+  threads?: {
     parentMessageId: string;
     count: number;
+    timestamp: string;
   }[];
 };
 

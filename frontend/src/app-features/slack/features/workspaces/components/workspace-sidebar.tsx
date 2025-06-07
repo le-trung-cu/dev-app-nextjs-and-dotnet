@@ -27,6 +27,7 @@ import { MemberAvatar } from "../../members/components/member-avatar";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useCurrentInfo } from "@/app-features/auth/api/use-current-info";
+import { FaCaretDown } from "react-icons/fa";
 
 export const WorkspaceSidebar = () => {
   const pathname = usePathname();
@@ -53,20 +54,13 @@ export const WorkspaceSidebar = () => {
         <SidebarGroup className="px-0">
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton>
-                    <MessageSquareMoreIcon /> Threads
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton>
-                    <SendHorizonal /> Dasfts & Sent
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
               <SidebarMenuItem className="flex h-[40px] items-center">
-                <SidebarMenuButton>Channels</SidebarMenuButton>
+                <SidebarMenuButton>
+                  <FaCaretDown
+                    className={cn("size-4 -rotate-90 transition-transform")}
+                  />
+                  Channels
+                </SidebarMenuButton>
                 <SidebarMenuAction asChild>
                   <Button
                     variant="ghost"
@@ -80,11 +74,7 @@ export const WorkspaceSidebar = () => {
               </SidebarMenuItem>
             </SidebarMenu>
             {isPending ? (
-              <>
-                <div>
-                  <Loader className="animate-spin" />
-                </div>
-              </>
+              <></>
             ) : (
               channels?.map((item) => {
                 const href = `/slack/workspaces/${workspaceId}/channels/${item.id}`;
@@ -106,6 +96,16 @@ export const WorkspaceSidebar = () => {
                 );
               })
             )}
+            <SidebarMenu>
+              <SidebarMenuItem className="flex h-[40px] items-center">
+                <SidebarMenuButton>
+                  <FaCaretDown
+                    className={cn("size-4 -rotate-90 transition-transform")}
+                  />
+                  Direct Message
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
             {members?.map((item) => {
               if (item.userId == current?.user.id) return null;
               return (

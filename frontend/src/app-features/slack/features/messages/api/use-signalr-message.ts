@@ -7,9 +7,14 @@ export const useSignalRMessage = ({ workspaceId }: { workspaceId: string }) => {
   useSignalREffect(
     `slack:${workspaceId}:messages`,
     (message: Message) => {
-      console.log({message});
       queryClient.setQueryData(
-        ["messages", workspaceId, message.channelId, message.parentMessageId, message.conversationId],
+        [
+          "messages",
+          workspaceId,
+          message.channelId,
+          message.parentMessageId,
+          message.conversationId,
+        ],
         (oldData: { pageParams: string[]; pages: PaginationMessages[] }) => {
           if (!oldData || !oldData.pages || oldData.pages.length === 0) {
             return {
@@ -33,7 +38,7 @@ export const useSignalRMessage = ({ workspaceId }: { workspaceId: string }) => {
               ...newData[0].messages,
               [message.id]: {
                 message,
-                threads: { count: 0 },
+                threads: { count: 0, timestamp: message.createdAt },
                 reactions: [],
               },
             },
@@ -45,6 +50,44 @@ export const useSignalRMessage = ({ workspaceId }: { workspaceId: string }) => {
           };
         },
       );
+      if (!!message.parentMessageId) {
+        queryClient.setQueryData(
+          [
+            "messages",
+            workspaceId,
+            message.channelId,
+            undefined,
+            message.conversationId,
+          ],
+          (oldData: { pageParams: string[]; pages: PaginationMessages[] }) => {
+            const newData = oldData.pages.map((page) => {
+              if (page.messages[message.parentMessageId] == undefined) {
+                return page;
+              }
+              return {
+                ...page,
+                ids: [...page.ids],
+                messages: {
+                  ...page.messages,
+                  [message.parentMessageId]: {
+                    ...page.messages[message.parentMessageId],
+                    threads: {
+                      count:
+                        (page.messages[message.parentMessageId].threads
+                          ?.count ?? 0) + 1,
+                      timestamp: message.createdAt,
+                    },
+                  },
+                },
+              };
+            });
+            return {
+              ...oldData,
+              pages: newData,
+            };
+          },
+        );
+      }
     },
     [workspaceId],
   );
@@ -52,13 +95,18 @@ export const useSignalRMessage = ({ workspaceId }: { workspaceId: string }) => {
   useSignalREffect(
     `slack:${workspaceId}:messages:update`,
     (message: Message) => {
-      console.log("updated message", message);
       queryClient.setQueryData(
-        ["messages", workspaceId, message.channelId, message.parentMessageId],
+        [
+          "messages",
+          workspaceId,
+          message.channelId,
+          message.parentMessageId,
+          message.conversationId,
+        ],
         (oldData: { pageParams: string[]; pages: PaginationMessages[] }) => {
-          console.log("oldDate", oldData)
-          const newData = oldData.pages.map(page => {
-            if(page.messages[message.id] == undefined) {
+          console.log("oldDate", oldData);
+          const newData = oldData.pages.map((page) => {
+            if (page.messages[message.id] == undefined) {
               return page;
             }
             return {
@@ -69,13 +117,14 @@ export const useSignalRMessage = ({ workspaceId }: { workspaceId: string }) => {
                 [message.id]: {
                   ...page.messages[message.id],
                   message,
-                }
-              }
-            }
-          })
+                },
+              },
+            };
+          });
           return {
             ...oldData,
-            pages: newData};
+            pages: newData,
+          };
         },
       );
     },

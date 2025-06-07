@@ -23,8 +23,6 @@ export const SignalRProvider = ({
   }, []);
 
   if (!mounted) return children;
-  // return ;
-  console.log("XXXXXXX", !!token && !!workspaceId && mounted)
 
   return (
     <SignalRContext.Provider

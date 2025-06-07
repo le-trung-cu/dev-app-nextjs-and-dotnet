@@ -23,7 +23,6 @@ export const useGetMessages = ({
     queryKey: ["messages", workspaceId, channelId, parentMessageId, conversationId],
     initialPageParam: null,
     getNextPageParam: (lastPage, allPages) => {
-      console.log(lastPage, allPages);
       return lastPage.ids.length < lastPage.pageSize
         ? undefined
         : lastPage.cursor;
