@@ -19,7 +19,7 @@ type Props = {
 export default async function Page({ params }: Props) {
   const { tenantId } = await params;
   const queryClient = new QueryClient();
-  prefetchProductsInfinite(queryClient, { tenantId });
+  // prefetchProductsInfinite(queryClient, { tenantId });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

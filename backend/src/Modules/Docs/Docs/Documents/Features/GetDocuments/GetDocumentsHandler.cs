@@ -4,13 +4,19 @@ using Docs.Documents.Models;
 using Mapster;
 using Shared.Contracts.CQRS;
 using Shared.Extensions;
+using Shared.Pagination;
 
 namespace Docs.Documents.Features.GetDocuments;
 
 
-public record GetDocumentsQuery(string? Search, Guid? OrganizationId) : IQuery<GetDocumentsResult>;
+public record GetDocumentsQuery : PaginationRequest, IQuery<GetDocumentsResult>
+{
+  public string? Search { get; set; }
+  public Guid? OrganizationId { get; set; }
+}
 
-public record GetDocumentsResult(bool IsSuccess, IEnumerable<DocumentDto> Documents);
+public record GetDocumentsResult(bool IsSuccess, PaginatedResult<DocumentDto> Documents);
+
 public class GetDocumentsHandler
   (DocumentDbContext dbContext, ClaimsPrincipal user)
   : IQueryHandler<GetDocumentsQuery, GetDocumentsResult>
@@ -32,9 +38,17 @@ public class GetDocumentsHandler
     {
       docsQuery = docsQuery.Where(x => x.OwnerId == user.GetUserId().ToString());
     }
+    var count = await docsQuery.LongCountAsync(cancellationToken);
 
-    var docs = await docsQuery.ToListAsync(cancellationToken);
+    var docs = await docsQuery
+      .Skip((query.PageIndex - 1) * query.PageSize)
+      .Take(query.PageSize)
+      .ToListAsync(cancellationToken);
 
-    return new GetDocumentsResult(true, docs.Adapt<IEnumerable<DocumentDto>>());
+    return new GetDocumentsResult
+    (
+      IsSuccess: true,
+      Documents: new(query.PageIndex, query.PageSize, count, docs.Adapt<IEnumerable<DocumentDto>>())
+    );
   }
 }

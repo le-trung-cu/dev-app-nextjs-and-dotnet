@@ -10,9 +10,10 @@ export type Document = {
 
 export type GetDocumentsResponseType = {
   isSuccess: boolean;
-  data: Document[];
-  count: number;
-  pageIndex: number;
-  pageSize: number;
-  documents: Document[];
+  documents: {
+    data: Document[];
+    count: number;
+    pageIndex: number;
+    pageSize: number;
+  };
 };

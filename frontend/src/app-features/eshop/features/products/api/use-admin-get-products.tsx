@@ -11,7 +11,7 @@ export const useAdminGetProducts = () => {
   const query = useQuery({
     queryKey: ["admin/products"],
     queryFn: async () => {
-      const response = await clients.get("/api/eshop/admin/products?pageIndex=1");
+      const response = await clients.get("/api/eshop/admin/products?pageIndex=1&pageSize=50");
       return response.data.products.data;
     },
   });

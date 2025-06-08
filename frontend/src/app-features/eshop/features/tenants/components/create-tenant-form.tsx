@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormField, FormItem, FormLabel } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Save } from "lucide-react";
+import { FilePlus, Save } from "lucide-react";
 import { useCreateTenant } from "../api/use-create-tenant";
 import { useRouter } from "next/navigation";
 
@@ -68,7 +68,7 @@ export const CreateTenantForm = () => {
         />
         <div className="flex justify-between">
           <Button>
-            <Save /> Save
+            <FilePlus /> Create Shop
           </Button>
         </div>
       </form>

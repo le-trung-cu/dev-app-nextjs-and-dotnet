@@ -128,6 +128,10 @@ namespace JiraTaskManager.Data.Migrations
                     b.Property<int>("Position")
                         .HasColumnType("integer");
 
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<Guid?>("ProjectId")
                         .HasColumnType("uuid");
 

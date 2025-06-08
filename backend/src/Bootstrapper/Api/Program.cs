@@ -15,7 +15,11 @@ using EshopMedias;
 using Docs;
 
 var builder = WebApplication.CreateBuilder(args);
-
+// Disable HTTPS redirection
+builder.Services.AddHttpsRedirection(options =>
+{
+    options.HttpsPort = null;
+});
 // Add services to the container.
 builder.Services.AddResendClient(builder.Configuration);
 builder.Services.AddSignalR();
@@ -48,46 +52,46 @@ builder.Services
     .AddAuthModule(builder.Configuration)
     .AddJiraTaskManagerModule(builder.Configuration)
     .AddSlackChatModule(builder.Configuration)
-    .AddDocumentModule(builder.Configuration);
+    .AddDocumentModule(builder.Configuration)
 /*Eshop*/
-// .AddEshopMediaModule(builder.Configuration)
-// .AddEshopTenantModule(builder.Configuration)
-// .AddEshopCatalogModule(builder.Configuration)
-// .AddBasketModule(builder.Configuration)
-// .AddOrderingModule(builder.Configuration);
+    .AddEshopMediaModule(builder.Configuration)
+    .AddEshopTenantModule(builder.Configuration)
+    .AddEshopCatalogModule(builder.Configuration)
+    .AddBasketModule(builder.Configuration)
+    .AddOrderingModule(builder.Configuration);
 
 builder.Services.AddMediatRWithAssemblies(
     authAssembly,
     jiraAssembly,
     slackAssembly,
-    documentAssembly
+    documentAssembly,
     /*Eshop*/
-    // mediaAssembly,
-    // tenantAssembly,
-    // catalogAssembly,
-    // basketAssembly,
-    // orderingAssembly
+    mediaAssembly,
+    tenantAssembly,
+    catalogAssembly,
+    basketAssembly,
+    orderingAssembly
     );
 builder.Services.AddCarterAssemblies(
     authAssembly,
     jiraAssembly,
     slackAssembly,
-    documentAssembly
+    documentAssembly,
     /*Eshop*/
-    // mediaAssembly,
-    // tenantAssembly,
-    // catalogAssembly,
-    // basketAssembly
-    // orderingAssembly
+    mediaAssembly,
+    tenantAssembly,
+    catalogAssembly,
+    basketAssembly,
+    orderingAssembly
     );
 
-// builder.Services.AddMassTransitWithAssemblies(
-//     builder.Configuration,
-//     tenantAssembly
-//     // catalogAssembly,
-//     // basketAssembly
-//     // orderingAssembly
-//     );
+builder.Services.AddMassTransitWithAssemblies(
+    builder.Configuration,
+    tenantAssembly,
+    catalogAssembly,
+    basketAssembly,
+    orderingAssembly
+    );
 
 builder.Services.AddCors(options =>
 {
@@ -103,7 +107,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (true || app.Environment.IsDevelopment())
 {
     app.UseCors();
     app.UseSwagger();
@@ -115,39 +119,15 @@ app.UseStaticFiles();
 app.UseAuthModule()
     .UseJiraTaskManagerModule()
     .UseSlackChatModule()
-    .UseDocumentModule();
-    // .UseEshopMediaModule()
-    // .UseEshopTenantModule()
-    // .UseEshopCatalogModule()
-    // .UseBasketModule();
+    .UseDocumentModule()
+    .UseEshopMediaModule()
+    .UseEshopTenantModule()
+    .UseEshopCatalogModule()
+    .UseBasketModule();
 
 app.UseSlackChatHub();
 
 // app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 app.MapCarter();
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast = Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

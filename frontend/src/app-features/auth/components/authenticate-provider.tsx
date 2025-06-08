@@ -46,9 +46,9 @@ export const Unauthenticated = ({
   children: React.ReactNode;
 }) => {
   const context = useContext(AuthenticateContext);
-  const isAuthenticated = !!context &&  !context.isAuthLoading && !!context.current;
+  const isAuthenticated = !!context && !!context.current;
 
-  return !isAuthenticated ? children : null;
+  return isAuthenticated || context!.isAuthLoading ? null : children;
 };
 
 

@@ -10,6 +10,7 @@ public record UpdateTaskCommand : ICommand<UpdateTaskResult>
   public string? AssigneeId { get; set; }
   public string Name { get; set; } = default!;
   public TaskItemStatus Status { get; set; }
+  public Priority Priority { get; set; }
   public DateTime? EndDate { get; set; }
   public string? Description { get; set; } = string.Empty;
 }
@@ -44,6 +45,7 @@ public class UpdateTaskHandler
            command.AssigneeId,
            command.Name,
            command.Status,
+           command.Priority,
            command.EndDate);
     }
     else

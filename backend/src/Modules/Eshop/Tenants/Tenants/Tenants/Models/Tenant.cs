@@ -9,13 +9,13 @@ public class Tenant : Entity<Guid>
 
   public Guid? ImageId { get; private set; }
   public Media? Image { get; set; }
-  public string StripeAccountId { get; set; } = default!;
+  public string? StripeAccountId { get; set; } = default!;
   public bool StripeDetailsSubmitted { get; set; }
 
   private readonly List<Member> _members = [];
   public IReadOnlyList<Member> Members => _members.AsReadOnly();
 
-  public static Tenant Create(string name, string slug, Media? image)
+  public static Tenant Create(string name, string slug, string? stripeAccountId, Media? image)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(name);
     ArgumentException.ThrowIfNullOrWhiteSpace(slug);
@@ -24,11 +24,13 @@ public class Tenant : Entity<Guid>
     {
       Name = name,
       Slug = slug,
-      Image = image
+      StripeAccountId = stripeAccountId,
+      Image = image,
+      StripeDetailsSubmitted = false,
     };
     return tenant;
   }
-  public static Tenant Create(string name, string slug, Guid? imageId)
+  public static Tenant Create(string name, string slug, string? stripeAccountId, Guid? imageId)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(name);
     ArgumentException.ThrowIfNullOrWhiteSpace(slug);
@@ -37,27 +39,30 @@ public class Tenant : Entity<Guid>
     {
       Name = name,
       Slug = slug,
+      StripeAccountId = stripeAccountId,
       ImageId = imageId
     };
     return tenant;
   }
 
-  public void Update(string name, string slug, Media? image = null)
+  public void Update(string name, string slug, string? stripeAccountId, Media? image = null)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(name);
     ArgumentException.ThrowIfNullOrWhiteSpace(slug);
     Name = name;
     Slug = slug;
     Image = image;
+    StripeAccountId = stripeAccountId;
   }
 
-  public void Update(string name, string slug, Guid? imageId = null)
+  public void Update(string name, string slug, string? stripeAccountId, Guid? imageId = null)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(name);
     ArgumentException.ThrowIfNullOrWhiteSpace(slug);
     Name = name;
     Slug = slug;
     ImageId = imageId;
+    StripeAccountId = stripeAccountId;
   }
 
   public Member AddMember(string userId, MemberRole role)

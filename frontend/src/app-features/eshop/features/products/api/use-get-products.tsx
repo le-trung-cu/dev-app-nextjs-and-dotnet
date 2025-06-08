@@ -36,7 +36,7 @@ export const useGetProductsInfinitie = ({tenantId, categoryId}:{tenantId?: strin
        if(categoryId) {
         queryArr.push(`categoryId=${categoryId}`);
       }
-      queryArr.push(`pageIndex=${pageParam}`)
+      queryArr.push(`pageIndex=${pageParam}`, `pageSize=${10}`);
       let queryString = queryArr.join("&");
 
       const response = await axios.get(`/api/eshop/products?${queryString}`, {

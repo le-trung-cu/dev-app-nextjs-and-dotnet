@@ -35,9 +35,7 @@ public static class Extentions
   {
     using var scope = serviceProvider.CreateScope();
     var seeders = scope.ServiceProvider
-        .GetServices<IDataSeeder>()
-        .Where(s => s is IDataSeeder<TContext>)
-        .Cast<IDataSeeder>();
+        .GetServices<IDataSeeder<TContext>>();
 
     foreach (var seeder in seeders)
     {

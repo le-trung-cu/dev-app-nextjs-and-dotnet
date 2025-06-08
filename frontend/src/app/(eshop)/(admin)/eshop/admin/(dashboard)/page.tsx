@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { collections } from "../_components/_data";
+import { collections } from "./_components/_data";
 import { PlusCircle } from "lucide-react";
 import Link from "next/link";
 

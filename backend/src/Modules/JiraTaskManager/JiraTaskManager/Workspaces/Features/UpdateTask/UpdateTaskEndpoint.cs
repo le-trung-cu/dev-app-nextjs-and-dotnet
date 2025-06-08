@@ -12,6 +12,9 @@ public record UpdateTaskRequest
 
   [JsonConverter(typeof(JsonStringEnumConverter))]
   public TaskItemStatus Status { get; set; }
+
+  [JsonConverter(typeof(JsonStringEnumConverter))]
+  public Priority Priority { get; set; }
   public DateTime? EndDate { get; set; }
   public string? Description { get; set; }
 }

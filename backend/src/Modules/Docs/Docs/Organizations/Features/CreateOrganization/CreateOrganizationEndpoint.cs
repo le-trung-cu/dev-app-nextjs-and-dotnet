@@ -16,7 +16,8 @@ public class CreateOrganizationEndpoint : ICarterModule
   {
     app.MapPost("/api/docs/organizations", async ([FromForm] CreateOrganizationRequest request, ISender sender) =>
     {
-      var result = await sender.Send(request.Adapt<CreateOrganizationCommand>());
+
+      var result = await sender.Send(new CreateOrganizationCommand(request.Name, request.Slug, request.File));
       return result;
     })
     .RequireAuthorization()
