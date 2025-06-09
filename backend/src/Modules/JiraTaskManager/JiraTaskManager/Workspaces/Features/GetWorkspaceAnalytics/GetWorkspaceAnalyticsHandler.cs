@@ -1,5 +1,8 @@
 
+using System.Linq;
 using System.Linq.Expressions;
+using System.Text.Json.Serialization;
+using Resend;
 
 namespace JiraTaskManager.Workspaces.Features.GetWorkspaceAnalytics;
 
@@ -27,6 +30,33 @@ public record WorkspaceAnalyticsDto
   public int CompletedTaskDifference => ThisMonthCompletedTasks - LastMonthCompletedTasks;
   public int OverdueTaskDifference => ThisMonthOverdueTasks - LastMonthOverdueTasks;
   public int IncompleteTaskDifference => ThisMonthIncompleteTasks - LastMonthIncompleteTasks;
+
+  public List<TaskTrend> TaskTrends { get; set; } = [];
+  public List<TaskPriority> TaskPriorities { get; set; } = [];
+  public List<ProjectProductive> ProjectProductives { get; set; } = [];
+}
+
+public class TaskTrend
+{
+  public string Day { get; set; }
+  public int Done { get; set; }
+  public int InProgress { get; set; }
+  public int Todo { get; set; }
+}
+
+public class TaskPriority
+{
+  public Priority Name { get; set; }
+  public int Value { get; set; }
+  public string Color { get; set; } = default!;
+}
+
+public class ProjectProductive
+{
+  public Guid ProjectId { get; set; }
+  public string Name { get; set; } = default!;
+  public int Completed { get; set; }
+  public int Total { get; set; }
 }
 
 public record GetWorkspaceAnalyticsCommand(Guid WorkspaceId)
@@ -45,6 +75,7 @@ public class GetWorkspaceAnalyticsHandler
   private readonly DateTime lastMonthStart;
   private readonly DateTime lastMonthEnd;
   private readonly DateTime now;
+  private readonly int Days = 7;
 
   public GetWorkspaceAnalyticsHandler(WorkspaceDbContext context, ClaimsPrincipal user)
   {
@@ -72,27 +103,125 @@ public class GetWorkspaceAnalyticsHandler
       .Select(x => x.Name)
       .FirstOrDefaultAsync(cancellationToken)
       ?? throw new WorkspaceNotFoundException(query.WorkspaceId);
-    var workspaceAnalytics = await context.Workspaces
+
+
+    var workspace = await context.Workspaces
       .AsNoTracking()
       .Where(x => x.Id == query.WorkspaceId)
-      .Select(x => new WorkspaceAnalyticsDto
-      {
-        Id = x.Id,
-        Name = x.Name,
-        TotalProjects = x.Projects.Count,
-        ThisMonthTasks = x.Tasks.AsQueryable().Where(InDateRange(thisMonthStart, thisMonthEnd)).Count(),
-        LastMonthTasks = x.Tasks.AsQueryable().Where(InDateRange(lastMonthStart, lastMonthEnd)).Count(),
-        ThisMonthAssignedTasks = x.Tasks.AsQueryable().Where(InDateRange(thisMonthStart, thisMonthEnd)).Where(t => t.AssigneeId == member.Id).Count(),
-        LastMonthAssignedTasks = x.Tasks.AsQueryable().Where(InDateRange(lastMonthStart, lastMonthEnd)).Where(t => t.AssigneeId == member.Id).Count(),
-        ThisMonthIncompleteTasks = x.Tasks.AsQueryable().Where(InDateRange(thisMonthStart, thisMonthEnd)).Where(t => t.Status != TaskItemStatus.Done).Count(),
-        LastMonthIncompleteTasks = x.Tasks.AsQueryable().Where(InDateRange(lastMonthStart, lastMonthEnd)).Where(t => t.Status != TaskItemStatus.Done).Count(),
-        ThisMonthCompletedTasks = x.Tasks.AsQueryable().Where(InDateRange(thisMonthStart, thisMonthEnd)).Where(t => t.Status == TaskItemStatus.Done).Count(),
-        LastMonthCompletedTasks = x.Tasks.AsQueryable().Where(InDateRange(lastMonthStart, lastMonthEnd)).Where(t => t.Status == TaskItemStatus.Done).Count(),
-        ThisMonthOverdueTasks = x.Tasks.AsQueryable().Where(InDateRange(thisMonthStart, thisMonthEnd)).Where(t => t.Status !=  TaskItemStatus.Done).Where(t => t.EndDate < now).Count(),
-        LastMonthOverdueTasks = x.Tasks.AsQueryable().Where(InDateRange(lastMonthStart, lastMonthEnd)).Where(t => t.Status != TaskItemStatus.Done).Where(t=> t.EndDate < now).Count(),
-      }).FirstOrDefaultAsync(cancellationToken)
+      .Include(x => x.Projects)
+      .Include(x => x.Tasks)
+      .FirstOrDefaultAsync(cancellationToken)
       ?? throw new WorkspaceNotFoundException(query.WorkspaceId);
+    var thisMonthTasks = workspace.Tasks.AsQueryable().Where(x => thisMonthStart <= x.CreatedAt &&  x.CreatedAt <= thisMonthEnd);
+    var lastMonthTasks = workspace.Tasks.AsQueryable().Where(x => lastMonthStart <= x.CreatedAt &&  x.CreatedAt <= lastMonthEnd);
 
+    var dict = Enumerable.Range(0, this.Days).Select(i =>
+    {
+      var date = now.AddDays(-i);
+      var key = date.ToString("dd/MM/yyyy");
+      var taskTrend = new TaskTrend { Day = key, Done = 0, InProgress = 0, Todo = 0 };
+      return (date, taskTrend);
+    }).ToDictionary(x => x.taskTrend.Day, x => x);
+    
+    foreach (var task in workspace.Tasks)
+    {
+
+      if (!task.LastModified.HasValue) continue;
+      var key = task.LastModified.Value.ToString("dd/MM/yyyy");
+      if (dict.TryGetValue(key, out var exist))
+      {
+        switch (task.Status)
+        {
+          case TaskItemStatus.InProgress:
+            exist.taskTrend.InProgress += 1;
+            break;
+          case TaskItemStatus.Todo:
+            exist.taskTrend.Todo += 1;
+            break;
+          case TaskItemStatus.Done:
+            exist.taskTrend.Done += 1;
+            break;
+        }
+      }
+      else
+      {
+        dict[key] = new(task.LastModified.Value, new TaskTrend { Day = key, Done = 0, InProgress = 0, Todo = 0 });
+      }
+    }
+
+    var taskTrends = dict.ToList().Select(x => x.Value).OrderBy(x => x.date).Select(x => x.taskTrend).ToList();
+
+
+    List<TaskPriority> taskPriories = [
+      new TaskPriority{Name = Priority.High, Value = 0, Color = "#ef4444"},
+      new TaskPriority{Name = Priority.Medium, Value = 0, Color = "#f59e0b"},
+      new TaskPriority{Name = Priority.Low, Value = 0, Color = "#6b7280"},
+    ];
+    foreach (var task in workspace.Tasks)
+    {
+      switch (task.Priority)
+      {
+        case Priority.High:
+          taskPriories[0].Value += 1;
+          break;
+        case Priority.Medium:
+          taskPriories[1].Value += 1;
+          break;
+        case Priority.Low:
+          taskPriories[2].Value += 1;
+          break;
+      }
+    }
+
+    var projectProductives = workspace.Tasks
+      .Where(x => x.ProjectId.HasValue)
+      .GroupBy(x => x.ProjectId, (key, x) => new ProjectProductive
+      {
+        ProjectId = key!.Value,
+        Name = workspace.Projects.First(p => p.Id == key).Name,
+        Completed = x.Count(t => t.Status == TaskItemStatus.Done),
+        Total = x.Count(),
+      })
+      .OrderByDescending(x => x.Total)
+      .ToList();
+
+    var workspaceAnalytics = new WorkspaceAnalyticsDto
+    {
+      Id = workspace.Id,
+      TotalProjects = workspace.Projects.Count,
+      ThisMonthTasks = thisMonthTasks.Count(),
+      LastMonthTasks = lastMonthTasks.Count(),
+      ThisMonthAssignedTasks = thisMonthTasks.Where(t => t.AssigneeId == member.Id).Count(),
+      LastMonthAssignedTasks = lastMonthTasks.Where(t => t.AssigneeId == member.Id).Count(),
+      ThisMonthIncompleteTasks = thisMonthTasks.Where(t => t.Status != TaskItemStatus.Done).Count(),
+      LastMonthIncompleteTasks = lastMonthTasks.Where(t => t.Status != TaskItemStatus.Done).Count(),
+      ThisMonthCompletedTasks = thisMonthTasks.Where(t => t.Status == TaskItemStatus.Done).Count(),
+      LastMonthCompletedTasks = lastMonthTasks.Where(t => t.Status == TaskItemStatus.Done).Count(),
+      ThisMonthOverdueTasks = thisMonthTasks.Where(t => t.Status != TaskItemStatus.Done).Where(t => t.EndDate < now).Count(),
+      LastMonthOverdueTasks = lastMonthTasks.Where(t => t.Status != TaskItemStatus.Done).Where(t => t.EndDate < now).Count(),
+      TaskTrends = taskTrends,
+      TaskPriorities = taskPriories,
+      ProjectProductives = projectProductives,
+    };
+
+
+    //  .Select(x => new WorkspaceAnalyticsDto
+    //       {
+    //         Id = x.Id,
+    //         Name = x.Name,
+    //         TotalProjects = x.Projects.Count,
+    //         ThisMonthTasks = x.Tasks.AsQueryable().Where(InDateRange(thisMonthStart, now)).Count(),
+    //         LastMonthTasks = x.Tasks.AsQueryable().Where(InDateRange(lastMonthStart, lastMonthEnd)).Count(),
+    //         ThisMonthAssignedTasks = x.Tasks.AsQueryable().Where(InDateRange(thisMonthStart, now)).Where(t => t.AssigneeId == member.Id).Count(),
+    //         LastMonthAssignedTasks = x.Tasks.AsQueryable().Where(InDateRange(lastMonthStart, lastMonthEnd)).Where(t => t.AssigneeId == member.Id).Count(),
+    //         ThisMonthIncompleteTasks = x.Tasks.AsQueryable().Where(InDateRange(thisMonthStart, now)).Where(t => t.Status != TaskItemStatus.Done).Count(),
+    //         LastMonthIncompleteTasks = x.Tasks.AsQueryable().Where(InDateRange(lastMonthStart, lastMonthEnd)).Where(t => t.Status != TaskItemStatus.Done).Count(),
+    //         ThisMonthCompletedTasks = x.Tasks.AsQueryable().Where(InDateRange(thisMonthStart, now)).Where(t => t.Status == TaskItemStatus.Done).Count(),
+    //         LastMonthCompletedTasks = x.Tasks.AsQueryable().Where(InDateRange(lastMonthStart, lastMonthEnd)).Where(t => t.Status == TaskItemStatus.Done).Count(),
+    //         ThisMonthOverdueTasks = x.Tasks.AsQueryable().Where(InDateRange(thisMonthStart, now)).Where(t => t.Status != TaskItemStatus.Done).Where(t => t.EndDate < now).Count(),
+    //         LastMonthOverdueTasks = x.Tasks.AsQueryable().Where(InDateRange(lastMonthStart, lastMonthEnd)).Where(t => t.Status != TaskItemStatus.Done).Where(t => t.EndDate < now).Count(),
+    //         TaskTrends = taskTrends,
+    //       }).FirstOrDefaultAsync(cancellationToken)
     return new GetWorkspaceAnalyticsResult(true, workspaceAnalytics);
   }
 
@@ -106,5 +235,6 @@ public class GetWorkspaceAnalyticsHandler
     return lastMomentOfMonth;
   }
 
-  public static Expression<Func<TaskItem, bool>> InDateRange(DateTime start, DateTime end) => t => t.CreatedAt >= start && t.CreatedAt <= end;
+  public static Expression<Func<TaskItem, bool>> InDateRange(DateTime start, DateTime end) =>
+    t => (t.CreatedAt >= start && t.CreatedAt <= end) || (t.LastModified >= start && t.LastModified <= end);
 }

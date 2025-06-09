@@ -2,7 +2,7 @@ namespace JiraTaskManager.Workspaces.Dtos;
 
 public record TaskDto
 {
-  public TaskDto(Guid id, Guid workspaceId, Guid? projectId, string? assigneeId, string name, TaskItemStatus status, DateTime? endDate, int position, string description)
+  public TaskDto(Guid id, Guid workspaceId, Guid? projectId, string? assigneeId, string name, TaskItemStatus status, Priority priority, DateTime? endDate, int position, string description)
   {
     Id = id;
     WorkspaceId = workspaceId;
@@ -10,6 +10,7 @@ public record TaskDto
     AssigneeId = assigneeId;
     Name = name;
     Status = status;
+    Priority = priority;
     EndDate = endDate;
     Position = position;
     Description = description;
@@ -21,6 +22,7 @@ public record TaskDto
   public string? AssigneeId { get; set; }
   public string Name { get; set; } = default!;
   public TaskItemStatus Status { get; set; }
+  public Priority Priority { get; set; }
   public DateTime? EndDate { get; set; }
   public int Position { get; set; }
   public string Description { get; set; }

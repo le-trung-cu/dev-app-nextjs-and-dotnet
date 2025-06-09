@@ -14,25 +14,28 @@ public class TaskItem : Entity<Guid>
   public Project? Project { get; private set; }
   public Guid? AssigneeId { get; private set; }
   public Member? Assignee { get; private set; }
+  public Priority Priority { get; private set; }
   public int Position { get; private set; }
 
-  internal TaskItem(Guid workspaceId, Guid? projectId, Guid? assigneeId, string name, TaskItemStatus status, DateTime? endDate, string? description)
+  internal TaskItem(Guid workspaceId, Guid? projectId, Guid? assigneeId, string name, TaskItemStatus status, Priority priority, DateTime? endDate, string? description)
   {
     WorkspaceId = workspaceId;
     ProjectId = projectId;
     AssigneeId = assigneeId;
     Name = name;
     Status = status;
+    Priority = priority;
     EndDate = endDate;
     Description = description;
   }
 
-  public void Update(Guid? projectId, Guid? assigneeId, string name, TaskItemStatus status, DateTime? endDate)
+  public void Update(Guid? projectId, Guid? assigneeId, string name, TaskItemStatus status, Priority priority, DateTime? endDate)
   {
     ProjectId = projectId;
     AssigneeId = assigneeId;
     Name = name;
     Status = status;
+    Priority = priority;
     EndDate = endDate;
   }
 

@@ -79,8 +79,9 @@ namespace Tenants.Data.Migrations
                     b.Property<DateTime?>("LastModified")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("integer");
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid>("TenantId")
                         .HasColumnType("uuid");
@@ -92,6 +93,8 @@ namespace Tenants.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("TenantId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Members", "eshop.tenants");
                 });
@@ -128,7 +131,6 @@ namespace Tenants.Data.Migrations
                         .HasColumnType("character varying(200)");
 
                     b.Property<string>("StripeAccountId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("StripeDetailsSubmitted")

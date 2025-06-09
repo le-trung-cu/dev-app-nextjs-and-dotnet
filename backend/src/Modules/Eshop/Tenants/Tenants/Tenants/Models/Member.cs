@@ -5,7 +5,7 @@ public class Member : Entity<Guid>
 {
   public Guid TenantId { get; private set; }
   public string UserId { get; private set; } = default!;
-  public MemberRole Role {get; private set;} = MemberRole.Owner;
+  public MemberRole Role {get; private set;} = MemberRole.Admin;
 
   internal Member(Guid tenantId, string userId, MemberRole role)
   {

@@ -9,12 +9,17 @@ dotnet ef migrations add update_nullable_Desctition_Task__column_table -o ./Data
 dotnet ef migrations add JiraAddPositionColumnInTasks -o ./Data/Migrations -c WorkspaceDbContext -s ../../../Bootstrapper/Api/Api.csproj 
 
 
+dotnet ef migrations add StringPriorityTask -o ./Data/Migrations -c JiraTaskManager.Data.WorkspaceDbContext -s ../../../Bootstrapper/Api/Api.csproj 
 dotnet ef migrations add SequentialGuidIdMessageeMigration -o ./Data/Migrations -c SlackChat.Data.WorkspaceDbContext -s ../../../Bootstrapper/Api/Api.csproj 
 
+dotnet ef database update -c JiraTaskManager.Data.WorkspaceDbContext
 dotnet ef database update -c SlackChat.Data.WorkspaceDbContext
 dotnet ef database update -c MediaDbContext
 dotnet ef database update -c DocumentDbContext
+dotnet ef database update -c TenantDbContext
 
 dotnet ef migrations add AddTenantIdColoumnShoppingCard -o ./Data/Migrations -c BasketDbContext -s ../../../../Bootstrapper/Api/Api.csproj 
+dotnet ef migrations add UpdateSchemaMember -o ./Data/Migrations -c TenantDbContext -s ../../../../Bootstrapper/Api/Api.csproj 
 dotnet ef migrations add Initial -o ./Data/Migrations -c MediaDbContext -s ../../../../Bootstrapper/Api/Api.csproj 
-dotnet ef migrations add UpdateMemberRole -o ./Data/Migrations -c DocumentDbContext -s ../../../Bootstrapper/Api/Api.csproj 
+dotnet ef migrations add RemoveUserIdInOrganizations -o ./Data/Migrations -c DocumentDbContext -s ../../../Bootstrapper/Api/Api.csproj 
+dotnet ef migrations add IndexConversation -o ./Data/Migrations -c SlackChat.Data.WorkspaceDbContext -s ../../../Bootstrapper/Api/Api.csproj 

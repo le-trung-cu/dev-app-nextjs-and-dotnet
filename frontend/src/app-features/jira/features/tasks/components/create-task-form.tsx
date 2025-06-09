@@ -18,7 +18,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { createTaskSchema, StatusValues } from "../types";
+import { createTaskSchema, PrioritesValue, StatusValues } from "../types";
 import { useCreateTask } from "../api/use-create-task";
 import { useWorkspaceId } from "../../workspaces/hooks/use-workspace-id";
 import {
@@ -58,7 +58,7 @@ export const CreateTaskForm = ({
   const { mutate } = useCreateTask();
 
   const onFormSubmit = (data: z.infer<typeof createTaskSchema>) => {
-    mutate({ workspaceId, data });
+    mutate({ workspaceId, data }, {onSuccess:  close});
   };
 
   return (
@@ -159,6 +159,30 @@ export const CreateTaskForm = ({
                       </SelectTrigger>
                       <SelectContent>
                         {StatusValues.map((item) => (
+                          <SelectItem value={item} key={item}>
+                            {item}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="priority"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Priority</FormLabel>
+                  <FormControl>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PrioritesValue.map((item) => (
                           <SelectItem value={item} key={item}>
                             {item}
                           </SelectItem>

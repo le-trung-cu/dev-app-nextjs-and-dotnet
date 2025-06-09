@@ -1,7 +1,7 @@
 
 namespace Tenants.Tenants.Features.UpdateTenant;
 
-public record UpdateTenantCommand(Guid Id, string Name, string Slug, Guid? ImageId)
+public record UpdateTenantCommand(Guid Id, string Name, string Slug,string? StripeAcountId, Guid? ImageId)
   : ICommand<UpdateTenantResult>;
 
 public record UpdateTenantResult(bool IsSuccess);
@@ -19,7 +19,7 @@ public class UpdateTenantHandler
       .FirstOrDefaultAsync(x => x.Id == command.Id, cancellationToken)
       ?? throw new TenantNotFoundException(command.Id);
 
-    tenant.Update(command.Name, command.Slug, command.ImageId);
+    tenant.Update(command.Name, command.Slug, command.StripeAcountId, command.ImageId);
 
     await dbContext.SaveChangesAsync(cancellationToken);
 

@@ -19,5 +19,7 @@ public class TaskItemConfiguration : IEntityTypeConfiguration<TaskItem>
       .HasForeignKey(x => x.ProjectId)
       .IsRequired(false)
       .OnDelete(DeleteBehavior.SetNull);
+
+    builder.Property(x => x.Priority).HasConversion<string>();
   }
 }

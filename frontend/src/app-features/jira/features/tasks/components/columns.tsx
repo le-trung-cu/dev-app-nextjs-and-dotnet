@@ -9,6 +9,7 @@ import { StatusBadge } from "./status-badge";
 import { TaskDate } from "./task-date";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, MoreVertical } from "lucide-react";
+import { PriorityBadge } from "./priority-badge";
 
 type DataType = {
   task: Task;
@@ -118,6 +119,23 @@ export const columns = [
     cell: (info) => {
       const status = info.getValue();
       return <StatusBadge variant={status}>{status}</StatusBadge>;
+    },
+  }),
+  columnHelper.accessor("task.priority", {
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Priority
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: (info) => {
+      const status = info.getValue();
+      return <PriorityBadge variant={status}>{status}</PriorityBadge>;
     },
   }),
   columnHelper.display({

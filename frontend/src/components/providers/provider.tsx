@@ -11,6 +11,7 @@ import {
 // import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import * as React from "react";
 import { AuthenticateType } from "@/app-features/auth/types";
+import { AuthenticateProdvider } from "@/app-features/auth/components/authenticate-provider";
 // import { MessageRequiredConfirmEmailDialog } from "@/features/auth/components/message-required-confirm-email-dialog";
 
 function makeQueryClient() {
@@ -66,9 +67,11 @@ export function Providers({ children, authenticated }: ProvidersProps) {
   return (
     <NuqsAdapter>
       <QueryClientProvider client={queryClient}>
-        {/* <MessageRequiredConfirmEmailDialog authenticated={authenticated} /> */}
-        {children}
-        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+        <AuthenticateProdvider>
+          {/* <MessageRequiredConfirmEmailDialog authenticated={authenticated} /> */}
+          {children}
+          {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+        </AuthenticateProdvider>
       </QueryClientProvider>
     </NuqsAdapter>
   );

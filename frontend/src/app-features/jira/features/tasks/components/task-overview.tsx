@@ -30,10 +30,10 @@ export const TaskOverview = ({ task, assignee }: Props) => {
       </CardHeader>
       <Separator />
       <CardContent className="grid gap-3">
-        <OverviewProperty label="Assignee">
+        {assignee && <OverviewProperty label="Assignee">
           <MemberAvatar name={assignee.name} />
           {assignee.name}
-        </OverviewProperty>
+        </OverviewProperty>}
         <OverviewProperty label="Due Date">
           <TaskDate value={task.endDate} />
         </OverviewProperty>

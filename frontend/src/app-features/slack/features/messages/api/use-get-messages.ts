@@ -20,7 +20,13 @@ export const useGetMessages = ({
   const queryMembers = useGetMembers({ workspaceId });
 
   const queryMessages = useInfiniteQuery<PaginationMessages>({
-    queryKey: ["messages", workspaceId, channelId, parentMessageId, conversationId],
+    queryKey: [
+      "messages",
+      workspaceId,
+      !channelId? null : channelId,
+      !parentMessageId? null : parentMessageId,
+      !conversationId ? null : conversationId,
+    ],
     initialPageParam: null,
     getNextPageParam: (lastPage, allPages) => {
       return lastPage.ids.length < lastPage.pageSize

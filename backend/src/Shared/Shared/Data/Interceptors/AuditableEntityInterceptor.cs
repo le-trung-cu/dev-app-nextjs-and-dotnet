@@ -33,6 +33,7 @@ public class AuditableEntityInterceptor(IHttpContextAccessor httpContextAccessor
       {
         entry.Entity.CreatedBy = userName;
         entry.Entity.CreatedAt = DateTime.UtcNow;
+        entry.Entity.LastModified = entry.Entity.CreatedAt;
       }
 
       if (entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.HasChangedOwnedEntities())

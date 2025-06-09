@@ -142,7 +142,7 @@ public class Workspace : Aggregate<Guid>
     return project;
   }
 
-  public TaskItem AddTask(Guid? projectId, string? assigneeId, string name, TaskItemStatus status, DateTime? endDate, string? description)
+  public TaskItem AddTask(Guid? projectId, string? assigneeId, string name, TaskItemStatus status, Priority priority, DateTime? endDate, string? description)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(name);
     Guid? memberId = null;
@@ -152,14 +152,14 @@ public class Workspace : Aggregate<Guid>
         ?? throw new MemberNotFoundException(assigneeId);
       memberId = assignee.Id;
     }
-    var task = new TaskItem(Id, projectId, memberId, name, status, endDate, description);
+    var task = new TaskItem(Id, projectId, memberId, name, status, priority, endDate, description);
 
     _tasks.Add(task);
 
     return task;
   }
 
-  public TaskItem UpdateTask(Guid taskId, Guid? projectId, string? assigneeId, string name, TaskItemStatus status, DateTime? endDate)
+  public TaskItem UpdateTask(Guid taskId, Guid? projectId, string? assigneeId, string name, TaskItemStatus status, Priority priority, DateTime? endDate)
   {
     ArgumentException.ThrowIfNullOrWhiteSpace(name);
     Guid? memberId = null;
@@ -177,7 +177,7 @@ public class Workspace : Aggregate<Guid>
 
     var task = _tasks.FirstOrDefault(x => x.Id == taskId) ?? throw new TaskItemNotFoundException(taskId);
 
-    task.Update(projectId, memberId, name, status, endDate);
+    task.Update(projectId, memberId, name, status, priority, endDate);
 
     return task;
   }

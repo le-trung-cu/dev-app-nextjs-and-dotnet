@@ -24,7 +24,7 @@ public static class CatalogModule
       options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
       options.UseNpgsql(configuration.GetConnectionString("Database"));
     });
-    // services.AddScoped<IDataSeeder, CzatalogDataSeeder>();
+    services.AddScoped<IDataSeeder<CatalogDbContext>, CatalogDataSeeder>();
 
     return services;
   }

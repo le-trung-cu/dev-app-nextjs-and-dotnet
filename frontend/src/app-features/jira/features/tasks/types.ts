@@ -6,6 +6,7 @@ export const createTaskSchema = z.object({
   projectId: z.string().optional().nullish(),
   assigneeId: z.string().optional().nullish(),
   status: z.string(),
+  priority: z.string(),
   endDate: z.date().nullish(),
 });
 
@@ -38,6 +39,7 @@ export type Task = {
   projectId?: string | null;
   assigneeId?: string | null;
   status: "Backlog" | "Todo" | "InProgress" | "InReview" | "Done";
+  priority: "High" | "Medium" | "Low";
   endDate?: string | null;
   position: number;
   description?: string | null;
@@ -57,4 +59,11 @@ export enum TaskStatus {
   InProgress = "InProgress",
   InReview = "InReview",
   Done = "Done",
+}
+
+export const PrioritesValue = ["High", "Medium", "Low"] as const;
+export enum Priorites {
+  High = "High",
+  Medium = "Medium",
+  Low = "Low",
 }

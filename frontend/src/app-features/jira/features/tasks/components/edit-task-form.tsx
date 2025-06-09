@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { createTaskSchema, Task, TaskStatus } from "../types";
+import { createTaskSchema, Priorites, Task, TaskStatus } from "../types";
 import { useUpdateTask } from "../api/use-update-task";
 import { MemberAvatar } from "../../members/components/member-avatar";
 import { ProjectAvatar } from "../../projects/components/project-avatar";
@@ -51,6 +51,7 @@ export const EditTaskForm = ({
     defaultValues: {
       name: initialValues.name,
       status: initialValues.status ?? "",
+      priority: initialValues.priority ?? "",
       projectId: initialValues.projectId ?? "",
       assigneeId: initialValues.assigneeId ?? "",
       endDate: initialValues.endDate
@@ -78,13 +79,13 @@ export const EditTaskForm = ({
 
   return (
     <Card className="h-full w-full border-none shadow-none">
-      <CardHeader className="flex p-7">
+      <CardHeader className="flex px-7">
         <CardTitle className="text-xl font-bold">Edit a task</CardTitle>
       </CardHeader>
       <div className="px-7">
         <Separator />
       </div>
-      <CardContent className="p-7">
+      <CardContent className="px-7">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <div className="flex flex-col gap-y-4">
@@ -111,6 +112,7 @@ export const EditTaskForm = ({
                       <DatePicker
                         selected={field.value}
                         onSelect={field.onChange}
+                        className="border-input"
                       />
                     </FormControl>
                     <FormMessage />
@@ -128,8 +130,8 @@ export const EditTaskForm = ({
                       onValueChange={field.onChange}
                     >
                       <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select assignee" />
+                        <SelectTrigger  className="w-full">
+                          <SelectValue placeholder="Select assignee"/>
                         </SelectTrigger>
                       </FormControl>
                       <FormMessage />
@@ -161,7 +163,7 @@ export const EditTaskForm = ({
                       onValueChange={field.onChange}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select status" />
                         </SelectTrigger>
                       </FormControl>
@@ -185,6 +187,31 @@ export const EditTaskForm = ({
               />
               <FormField
                 control={form.control}
+                name="priority"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Priority</FormLabel>
+                    <Select
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <FormControl>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <FormMessage />
+                      <SelectContent>
+                        <SelectItem value={Priorites.High}>High</SelectItem>
+                        <SelectItem value={Priorites.Medium}>Medium</SelectItem>
+                        <SelectItem value={Priorites.Low}>Low</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="projectId"
                 render={({ field }) => (
                   <FormItem>
@@ -194,7 +221,7 @@ export const EditTaskForm = ({
                       onValueChange={field.onChange}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select project" />
                         </SelectTrigger>
                       </FormControl>

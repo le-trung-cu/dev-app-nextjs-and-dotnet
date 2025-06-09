@@ -55,7 +55,7 @@ export const EditTaskFormWrapper = ({
     return null;
   }
 
-  const task = {...initialValues.task, assigneeId: initialValues.assignee.userId}
+  const task = {...initialValues.task, assigneeId: initialValues.assignee?.userId}
 
   return (
     <EditTaskForm
