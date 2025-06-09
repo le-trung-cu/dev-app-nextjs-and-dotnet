@@ -12,17 +12,31 @@ services:
       - "5432:5432"
     volumes:
       - devapp_db:/var/lib/postgresql/data
-  messagebus:
-    image: rabbitmq:management
-    container_name: rabbitmq_container
-    hostname: ecommerce-mq
-    restart: always
+  # messagebus:
+  #   image: rabbitmq:management
+  #   container_name: rabbitmq_container
+  #   hostname: ecommerce-mq
+  #   restart: always
+  #   ports:
+  #     - "5672:5627"
+  #     - "15672:15672"
+  #   environment:
+  #     - RABITMQ_DEFAULT_USER=guest
+  #     - RABITMQ_DEFAULT_PASS=guest
+  api:
+    depends_on:
+      - devapp_db
+    build:
+      context: ./backend
     ports:
-      - "5672:5627"
-      - "15672:15672"
+      - "5247:5247"
+      # - "7218:7218"
     environment:
-      - RABITMQ_DEFAULT_USER=guest
-      - RABITMQ_DEFAULT_PASS=guest
+      ASPNETCORE_ENVIRONMENT: Development
+      # - ASPNETCORE_Kestrel__Certificates__Default__Password=awesomepass
+      # - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/devapp.pfx
+    volumes:
+      - $HOME/.aspnet/https:/https:/https/
   
 volumes:
   devapp_db:
